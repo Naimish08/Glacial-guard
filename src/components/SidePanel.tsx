@@ -1,13 +1,40 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { X, MapPin } from "lucide-react";
+import { useMap } from "react-leaflet";
 
 interface SidePanelProps {
-  location: any;
+  location: {
+    name: string;
+    risk: string;
+    riskScore: number;
+    elevation: string;
+    country: string;
+    riskFactors: string[];
+    lastUpdated: string;
+    coordinates?: number[];
+    area?: string;
+    volume?: string;
+    temperature?: string;
+    morainCondition?: {
+      stability?: string;
+      thickness?: string;
+      composition?: string;
+    };
+  };
   onClose: () => void;
 }
 
 export const SidePanel = ({ location, onClose }: SidePanelProps) => {
+  const map = useMap();
+
+  const handleViewOnMap = () => {
+    if (location.coordinates) {
+      map.setView(location.coordinates as [number, number], 13);
+    }
+  };
+
   const getRiskColor = (risk: string) => {
     switch (risk) {
       case "safe": return "text-safe";
@@ -26,20 +53,21 @@ export const SidePanel = ({ location, onClose }: SidePanelProps) => {
     }
   };
 
-  // Mock detailed data
+  // Use data directly from location prop
   const details = {
     lakeDetails: {
-      area: "0.85 km²",
-      volume: "35.2 million m³",
-      elevation: "5,010 m",
-      temperature: "-2.3°C",
-      lastSurvey: "November 2024",
+      area: location.area || "0.85 km²",
+      volume: location.volume || "35.2 million m³",
+      elevation: location.elevation,
+      temperature: location.temperature || "-2.3°C",
+      lastUpdated: location.lastUpdated
     },
     morainaCondition: {
-      stability: location.risk === "danger" ? "Critical" : location.risk === "watch" ? "Monitoring" : "Stable",
-      thickness: "25-40 m",
-      composition: "Loose debris, ice core",
-      lastInspection: "3 days ago",
+      stability: location.risk === "danger" ? "Critical" : 
+                 location.risk === "watch" ? "Monitoring" : "Stable",
+      thickness: location.morainCondition?.thickness || "25-40 m",
+      composition: location.morainCondition?.composition || "Loose debris, ice core",
+      lastInspection: "3 days ago"
     },
     floodCorridor: {
       primaryPath: "Imja Khola Valley",
@@ -73,12 +101,24 @@ export const SidePanel = ({ location, onClose }: SidePanelProps) => {
             </div>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="p-2 hover:bg-muted rounded-md transition-colors"
-        >
-          <X className="w-4 h-4 text-muted-foreground" />
-        </button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleViewOnMap}
+            className="hover:bg-accent/20"
+          >
+            <MapPin className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="hover:bg-accent/20"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Content */}
@@ -108,7 +148,7 @@ export const SidePanel = ({ location, onClose }: SidePanelProps) => {
             </div>
           </div>
           <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
-            Last Survey: {details.lakeDetails.lastSurvey}
+            Last Updated: {details.lakeDetails.lastUpdated}
           </div>
         </Card>
 

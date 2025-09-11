@@ -164,11 +164,66 @@ html, body, #root {
 }
 
 .leaflet-popup-content-wrapper {
-  @apply bg-card text-card-foreground shadow-md;
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border-radius: var(--radius);
 }
 
 .leaflet-popup-tip {
-  @apply bg-card;
+  background: hsl(var(--card));
+}
+
+/* Flood path gradient */
+.flood-path-gradient {
+  background: linear-gradient(
+    45deg,
+    hsl(195 85% 50% / 0.2),
+    hsl(195 85% 50% / 0.4)
+  );
+}
+
+/* Glacial lake visualization styles */
+.glacial-watch-pattern {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    hsl(var(--watch) / 0.1) 10px,
+    hsl(var(--watch) / 0.1) 20px
+  );
+}
+
+.glacial-tooltip {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Pulsating glow animation for danger zones */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 5px hsl(var(--danger) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px hsl(var(--danger) / 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px hsl(var(--danger) / 0.3);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Map tooltips */
+.leaflet-tooltip {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-md) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 
