@@ -1,10 +1,20 @@
+@import "leaflet/dist/leaflet.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
 /* GlacialGuard Design System - Nature-inspired glacier monitoring dashboard
 All colors MUST be HSL.
 */
+
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 
 @layer base {
   :root {
@@ -131,3 +141,34 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* After your existing styles */
+
+/* Leaflet map container styles */
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+  background: hsl(var(--background));
+}
+
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Fix map tile loading */
+.leaflet-tile-container img {
+  width: 256px !important;
+  height: 256px !important;
+}
+
+.leaflet-popup-content-wrapper {
+  @apply bg-card text-card-foreground shadow-md;
+}
+
+.leaflet-popup-tip {
+  @apply bg-card;
+}
+
+
