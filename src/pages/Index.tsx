@@ -1,44 +1,55 @@
 import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
-import { MapView } from "@/components/MapView"; // Reverting back to direct import
+import { MapView } from "@/components/MapView";
 import { AlertPanel } from "@/components/AlertPanel";
 import { AlertsSection } from "@/components/AlertsSection";
 import { ReportsSection } from "@/components/ReportsSection";
 import { CommunitySection } from "@/components/CommunitySection";
 import { StatusTicker } from "@/components/StatusTicker";
 import { SidePanel } from "@/components/SidePanel";
+import { realTimeAlerts } from "@/components/AlertsSection";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("map");
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
+  const [selectedAlertId, setSelectedAlertId] = useState<number>();
+  const [mapCenter, setMapCenter] = useState<[number, number]>();
 
   const handleLocationSelect = (location: any) => {
-    console.log("Selected location:", location);
     setSelectedLocation(location);
+    const matchingAlert = realTimeAlerts.find(
+      alert => alert.lakeName === location.name
+    );
+    if (matchingAlert) {
+      setSelectedAlertId(matchingAlert.id);
+    }
+  };
+
+  const handleAlertSelect = (coordinates: [number, number]) => {
+    setMapCenter(coordinates);
   };
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Top Navigation */}
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} className="flex-none" />
-      
-      {/* Status Ticker */}
       <StatusTicker className="flex-none" />
       
-      {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {activeTab === "map" ? (
           <>
-            {/* Alert Panel - Left Side */}
-            <AlertPanel className="w-80 flex-none overflow-y-auto" />
+            <AlertPanel 
+              onAlertSelect={handleAlertSelect}
+              selectedAlertId={selectedAlertId}
+              className="w-80 flex-none overflow-y-auto"
+            />
             
-            {/* Main Map Area */}
             <div className="flex-1 relative">
               <MapView 
                 onLocationSelect={handleLocationSelect}
+                selectedLocation={selectedLocation?.name}
+                onPanToLocation={mapCenter}
               />
               
-              {/* Side Panel for Location Details */}
               {selectedLocation && (
                 <SidePanel 
                   location={selectedLocation} 
