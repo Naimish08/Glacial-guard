@@ -16,7 +16,7 @@ import { CommunitySection } from "../../components/citizen/CommunitySection";
 import { StatusTicker } from "../../components/StatusTicker";
 
 export function CitizenDashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth(); // <-- Add logout here
   const navigate = useNavigate();
 
 
@@ -39,7 +39,7 @@ export function CitizenDashboard() {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/');
+      navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
     }
