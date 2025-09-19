@@ -26,7 +26,7 @@ const StatusTicker = () => {
 };
 
 export function CitizenDashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth(); // <-- Add logout here
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<any>("map");
@@ -47,7 +47,7 @@ export function CitizenDashboard() {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/');
+      navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
     }
