@@ -6,12 +6,12 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
-import { ModelInputForm } from "./ModelInputForm"; // Import the new component
+import { ModelInputForm } from "./ModelInputForm";
 import MapViewSatellite from "./MapViewSatellite";
 
 // Re-using existing functions for consistency
-const getIndicatorIcon = (indicator) => {
-    const icons = {
+const getIndicatorIcon = (indicator: string) => {
+    const icons: Record<string, string> = {
         "rising-water": "🌊",
         "moraine-cracks": "🏔️",
         "temperature-spike": "🌡️",
@@ -23,13 +23,13 @@ const getIndicatorIcon = (indicator) => {
     return icons[indicator] || "⚪";
 };
 
-const getRiskColor = (score) => {
+const getRiskColor = (score: number) => {
     if (score >= 70) return "danger";
     if (score >= 40) return "watch";
     return "safe";
 };
 
-const getRiskBadgeVariant = (score) => {
+const getRiskBadgeVariant = (score: number) => {
     if (score >= 70) return "destructive";
     if (score >= 40) return "secondary";
     return "default";
@@ -77,258 +77,6 @@ export const realTimeAlerts = [
         coordinates: [86.963, 27.772],
     },
 ];
-export const AlertsSection = () => {
-	const [selectedView, setSelectedView] = useState("realtime");
-
-	return (
-		<div className="p-6 space-y-6">
-			{/* Header */}
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="text-2xl font-bold text-foreground flex items-center space-x-2">
-						<span>📲</span>
-						<span>Alert System</span>
-					</h1>
-					<p className="text-muted-foreground">
-						Life-saving real-time glacier monitoring
-					</p>
-				</div>
-				<div className="flex items-center space-x-2">
-					<div className="w-3 h-3 bg-safe rounded-full animate-pulse-glow"></div>
-					<span className="text-sm text-muted-foreground">
-						System Operational
-					</span>
-				</div>
-			</div>
-
-			<Tabs
-				value={selectedView}
-				onValueChange={setSelectedView}
-				className="w-full"
-			>
-				<TabsList className="grid w-full grid-cols-4">
-					<TabsTrigger value="realtime">Real-Time Feed</TabsTrigger>
-					<TabsTrigger value="satellite">Satellite Data</TabsTrigger>
-					<TabsTrigger value="sensors">IoT Sensors</TabsTrigger>
-					<TabsTrigger value="distribution">Alert Status</TabsTrigger>
-				</TabsList>
-
-				<TabsContent value="realtime" className="space-y-4">
-					<div className="grid gap-4">
-						{realTimeAlerts.map((alert) => (
-							<Card
-								key={alert.id}
-								className="p-4 shadow-card hover:shadow-soft transition-shadow"
-							>
-								{/* Alert Header */}
-								<div className="flex items-start justify-between mb-4">
-									<div className="flex items-center space-x-3">
-										<div
-											className={cn(
-												"w-4 h-4 rounded-full",
-												getRiskColor(alert.riskScore) === "danger"
-													? "bg-danger"
-													: getRiskColor(alert.riskScore) === "watch"
-													? "bg-watch"
-													: "bg-safe"
-											)}
-										></div>
-										<div>
-											<h3 className="font-semibold text-foreground">
-												{alert.lakeName}
-											</h3>
-											<p className="text-sm text-muted-foreground">
-												ID: {alert.lakeId}
-											</p>
-										</div>
-									</div>
-									<div className="text-right">
-										<Badge
-											variant={getRiskBadgeVariant(alert.riskScore)}
-											className="mb-1"
-										>
-											{alert.riskScore}/100
-										</Badge>
-										<p className="text-sm font-medium text-foreground">
-											Peak in {alert.timeToRisk}
-										</p>
-									</div>
-								</div>
-
-								{/* Risk Score Progress */}
-								<div className="mb-4">
-									<div className="flex justify-between text-sm mb-1">
-										<span className="text-muted-foreground">Risk Level</span>
-										<span className="font-medium text-foreground">
-											{alert.riskScore}%
-										</span>
-									</div>
-									<Progress
-										value={alert.riskScore}
-										className={cn(
-											"h-2",
-											getRiskColor(alert.riskScore) === "danger"
-												? "text-danger"
-												: getRiskColor(alert.riskScore) === "watch"
-												? "text-watch"
-												: "text-safe"
-										)}
-									/>
-								</div>
-
-								{/* SHAP Explanation */}
-								<div className="bg-muted/50 rounded-lg p-3 mb-4">
-									<div className="flex items-center space-x-2 mb-2">
-										<span>🔬</span>
-										<span className="text-sm font-medium text-foreground">
-											AI Analysis
-										</span>
-									</div>
-									<p className="text-sm text-muted-foreground">
-										{alert.explanation}
-									</p>
-
-									{/* Indicator Icons */}
-									<div className="flex space-x-2 mt-2">
-										{alert.indicators.map((indicator) => (
-											<span
-												key={indicator}
-												className="text-lg"
-												title={indicator}
-											>
-												{getIndicatorIcon(indicator)}
-											</span>
-										))}
-									</div>
-								</div>
-
-								{/* Action Suggestions */}
-								<div className="bg-accent/10 rounded-lg p-3 mb-4">
-									<div className="flex items-center space-x-2 mb-2">
-										<span>⚡</span>
-										<span className="text-sm font-medium text-foreground">
-											Immediate Actions
-										</span>
-									</div>
-									<ul className="space-y-1">
-										{alert.actions.map((action, index) => (
-											<li
-												key={index}
-												className="text-sm text-muted-foreground flex items-start space-x-2"
-											>
-												<span className="text-accent">•</span>
-												<span>{action}</span>
-											</li>
-										))}
-									</ul>
-								</div>
-
-								{/* Alert Distribution Status */}
-								<div className="flex items-center justify-between text-sm">
-									<div className="flex items-center space-x-4">
-										<div className="flex items-center space-x-1">
-											<span
-												className={
-													alert.status.villagers
-														? "text-safe"
-														: "text-danger"
-												}
-											>
-												{alert.status.villagers ? "✅" : "❌"}
-											</span>
-											<span className="text-muted-foreground">
-												Villagers
-											</span>
-										</div>
-										<div className="flex items-center space-x-1">
-											<span
-												className={
-													alert.status.officers
-														? "text-safe"
-														: "text-danger"
-												}
-											>
-												{alert.status.officers ? "✅" : "❌"}
-											</span>
-											<span className="text-muted-foreground">
-												Officers
-											</span>
-										</div>
-										<div className="flex items-center space-x-1">
-											<span
-												className={
-													alert.status.controlRoom
-														? "text-safe"
-														: "text-danger"
-												}
-											>
-												{alert.status.controlRoom ? "✅" : "❌"}
-											</span>
-											<span className="text-muted-foreground">
-												Control Room
-											</span>
-										</div>
-									</div>
-
-									{/* Action Buttons */}
-									<div className="flex space-x-2">
-										<Button variant="outline" size="sm">
-											📊 Details
-										</Button>
-										<Button variant="outline" size="sm">
-											🌊 Flood Map
-										</Button>
-										<Button variant="outline" size="sm">
-											📱 Re-send SMS
-										</Button>
-									</div>
-								</div>
-
-								{/* Affected Villages */}
-								<div className="mt-3 pt-3 border-t border-border">
-									<p className="text-xs text-muted-foreground mb-2">
-										🏘️ Affected Villages:
-									</p>
-									<div className="flex flex-wrap gap-1">
-										{alert.villages.map((village) => (
-											<Badge
-												key={village}
-												variant="outline"
-												className="text-xs"
-											>
-												{village}
-											</Badge>
-										))}
-									</div>
-								</div>
-							</Card>
-						))}
-					</div>
-				</TabsContent>
-
-				<TabsContent value="satellite" className="space-y-4">
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-						<Card className="p-4">
-							<h3 className="font-semibold mb-3 flex items-center space-x-2">
-								<span>🛰️</span>
-								<span>Satellite Imagery</span>
-							</h3>
-							<div className="h-[400px] w-full mb-4"> {/* Added fixed height container */}
-								<MapViewSatellite 
-									onLocationSelect={function (location: any): void {
-										throw new Error("Function not implemented.");
-									}}
-								/>
-							</div>
-							<div className="flex justify-between text-sm">
-								<span className="text-muted-foreground">
-									Last updated: 2 hrs ago
-								</span>
-								<Button variant="outline" size="sm">
-									View Full Resolution
-								</Button>
-							</div>
-						</Card>
 
 export const AlertsSection = () => {
     const [selectedView, setSelectedView] = useState("realtime");
@@ -373,7 +121,7 @@ export const AlertsSection = () => {
                                 key={alert.id}
                                 className="p-4 shadow-card hover:shadow-soft transition-shadow"
                             >
-                                {/* ... (The existing code for real-time alerts) */}
+                                {/* Alert Header */}
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center space-x-3">
                                         <div
@@ -382,8 +130,8 @@ export const AlertsSection = () => {
                                                 getRiskColor(alert.riskScore) === "danger"
                                                     ? "bg-danger"
                                                     : getRiskColor(alert.riskScore) === "watch"
-                                                        ? "bg-watch"
-                                                        : "bg-safe"
+                                                    ? "bg-watch"
+                                                    : "bg-safe"
                                             )}
                                         ></div>
                                         <div>
@@ -407,6 +155,8 @@ export const AlertsSection = () => {
                                         </p>
                                     </div>
                                 </div>
+
+                                {/* Risk Score Progress */}
                                 <div className="mb-4">
                                     <div className="flex justify-between text-sm mb-1">
                                         <span className="text-muted-foreground">Risk Level</span>
@@ -421,11 +171,13 @@ export const AlertsSection = () => {
                                             getRiskColor(alert.riskScore) === "danger"
                                                 ? "text-danger"
                                                 : getRiskColor(alert.riskScore) === "watch"
-                                                    ? "text-watch"
-                                                    : "text-safe"
+                                                ? "text-watch"
+                                                : "text-safe"
                                         )}
                                     />
                                 </div>
+
+                                {/* SHAP Explanation */}
                                 <div className="bg-muted/50 rounded-lg p-3 mb-4">
                                     <div className="flex items-center space-x-2 mb-2">
                                         <span>🔬</span>
@@ -436,6 +188,8 @@ export const AlertsSection = () => {
                                     <p className="text-sm text-muted-foreground">
                                         {alert.explanation}
                                     </p>
+
+                                    {/* Indicator Icons */}
                                     <div className="flex space-x-2 mt-2">
                                         {alert.indicators.map((indicator) => (
                                             <span
@@ -448,6 +202,8 @@ export const AlertsSection = () => {
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* Action Suggestions */}
                                 <div className="bg-accent/10 rounded-lg p-3 mb-4">
                                     <div className="flex items-center space-x-2 mb-2">
                                         <span>⚡</span>
@@ -467,6 +223,8 @@ export const AlertsSection = () => {
                                         ))}
                                     </ul>
                                 </div>
+
+                                {/* Alert Distribution Status */}
                                 <div className="flex items-center justify-between text-sm">
                                     <div className="flex items-center space-x-4">
                                         <div className="flex items-center space-x-1">
@@ -512,6 +270,8 @@ export const AlertsSection = () => {
                                             </span>
                                         </div>
                                     </div>
+
+                                    {/* Action Buttons */}
                                     <div className="flex space-x-2">
                                         <Button variant="outline" size="sm">
                                             📊 Details
@@ -524,6 +284,8 @@ export const AlertsSection = () => {
                                         </Button>
                                     </div>
                                 </div>
+
+                                {/* Affected Villages */}
                                 <div className="mt-3 pt-3 border-t border-border">
                                     <p className="text-xs text-muted-foreground mb-2">
                                         🏘️ Affected Villages:
@@ -546,17 +308,18 @@ export const AlertsSection = () => {
                 </TabsContent>
 
                 <TabsContent value="satellite" className="space-y-4">
-                    {/* ... (existing satellite data cards) */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <Card className="p-4">
                             <h3 className="font-semibold mb-3 flex items-center space-x-2">
                                 <span>🛰️</span>
                                 <span>Satellite Imagery</span>
                             </h3>
-                            <div className="aspect-video bg-muted rounded-lg mb-3 flex items-center justify-center">
-                                <p className="text-muted-foreground">
-                                    Satellite view loading...
-                                </p>
+                            <div className="h-[400px] w-full mb-4">
+                                <MapViewSatellite 
+                                    onLocationSelect={(location: any) => {
+                                        console.log("Location selected:", location);
+                                    }}
+                                />
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">
@@ -567,6 +330,7 @@ export const AlertsSection = () => {
                                 </Button>
                             </div>
                         </Card>
+
                         <Card className="p-4">
                             <h3 className="font-semibold mb-3 flex items-center space-x-2">
                                 <span>📈</span>
@@ -598,14 +362,12 @@ export const AlertsSection = () => {
                     </div>
                 </TabsContent>
 
-                {/* IoT Sensors Content (UPDATED) */}
+                {/* IoT Sensors Content */}
                 <TabsContent value="sensors" className="space-y-4">
-                    {/* The new ModelInputForm component is rendered here */}
                     <ModelInputForm />
                 </TabsContent>
 
                 <TabsContent value="distribution" className="space-y-4">
-                    {/* ... (existing alert distribution content) */}
                     <div className="grid gap-4">
                         <Card className="p-4">
                             <h3 className="font-semibold mb-4 flex items-center space-x-2">
