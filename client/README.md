@@ -34,6 +34,23 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## Supabase Auth Setup
+
+1. Create a free project at https://supabase.com/.
+2. In your Supabase project dashboard, go to Project Settings > API and copy:
+   - Project URL
+   - anon/public API key
+3. In the `client/` directory, create a `.env` file with:
+
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. Restart the dev server after adding or changing .env variables.
+
+This project uses Supabase Auth for secure user authentication.
+
 ## What technologies are used for this project?
 
 This project is built with:

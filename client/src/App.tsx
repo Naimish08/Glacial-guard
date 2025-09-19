@@ -7,7 +7,9 @@ import { AuthProvider } from "./lib/AuthContext";
 import { AdminDashboard } from "./pages/admin/Dashboard";
 import { CitizenDashboard } from "./pages/citizen/Dashboard";
 import { LoginDialog } from "./components/LoginDialog";
+import { AuthCallback } from "./pages/AuthCallback";
 import { NotFound } from "./pages/NotFound";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient();
 
@@ -20,8 +22,9 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Navigate to="/citizen" replace />} />
+              <Route path="/" element={<Index />} />
               <Route path="/login" element={<LoginDialog />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/citizen" element={<CitizenDashboard />} />
               <Route path="*" element={<NotFound />} />
