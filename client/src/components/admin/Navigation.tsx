@@ -46,13 +46,12 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         </div>
         
         {/* Status Indicator */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-5">
           <div className="w-2 h-2 bg-safe rounded-full animate-pulse-glow"></div>
           <span className="text-sm text-muted-foreground">System Active</span>
         </div>
 
         <div className="flex items-center">
-          <LoginDialog />
         </div>
       </div>
     </nav>
