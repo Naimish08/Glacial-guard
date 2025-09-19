@@ -9,6 +9,11 @@ import { Button } from "../../components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
 import { LogOut, User, Settings, Home, Shield } from "lucide-react";
+import { StatusTicker } from "@/components/StatusTicker";
+
+// Assuming you have a separate StatusTicker component
+// If not, you can define it here for this component to use
+
 
 export function AdminDashboard() {
   const { user, role, loading, logout } = useAuth();
@@ -37,10 +42,17 @@ export function AdminDashboard() {
   if (loading || !user || role !== 'admin') return null;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
+      {/* 1. Main Navigation Bar (fixed at top) */}
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       
-      {/* Admin User Profile Dropdown */}
+      {/* 2. Status Ticker (fixed below the nav bar) */}
+      {/* The `top-14` class assumes the navigation bar has a height of h-14 (56px) */}
+      <div className="fixed top-14 left-0 right-0 z-[90]">
+        <StatusTicker />
+      </div>
+
+      {/* 3. Admin User Profile Dropdown */}
       <div className="fixed top-4 right-4 z-50">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -87,9 +99,12 @@ export function AdminDashboard() {
         </DropdownMenu>
       </div>
 
-      <div className="flex">
+      {/* 4. Main content, correctly pushed down by both fixed elements */}
+      {/* The combined height of the nav (h-14) and ticker (h-10) is ~56px + 40px = 96px */}
+      {/* So, we use a padding top of pt-[96px] */}
+      <div className="flex flex-1 pt-[96px]">
         <SidePanel onClose={() => {}} location={null} />
-        <main className="flex-1 p-6 pt-20">
+        <main className="flex-1 p-6">
           <AlertPanel onAlertSelect={() => {}} />
           <MapView onLocationSelect={() => {}} />
         </main>
