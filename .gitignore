@@ -12,6 +12,7 @@ node_modules
 # Python
 __pycache__/
 *.pyc
+/python-service/venv/
 
 # IDEs and OS files
 .DS_Store
