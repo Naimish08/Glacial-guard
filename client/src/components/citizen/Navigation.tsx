@@ -52,7 +52,6 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         </div>
 
         <div className="flex items-center">
-          <LoginDialog />
         </div>
       </div>
     </nav>

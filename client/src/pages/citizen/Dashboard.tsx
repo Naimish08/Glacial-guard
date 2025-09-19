@@ -1,28 +1,31 @@
 import { useState } from "react";
-import { Navigation } from "../../components/citizen/Navigation";
-import { AlertPanel } from "../../components/citizen/AlertPanel";
-import { MapView } from "../../components/citizen/MapView";
-import { SidePanel } from "../../components/citizen/SidePanel";
 import { useNavigate } from "react-router-dom";
-import { AlertsSection, realTimeAlerts } from "../../components/admin/AlertsSection";
-import { ReportsSection } from "../../components/ReportsSection";
-import { CommunitySection } from "../../components/citizen/CommunitySection";
-import { StatusTicker } from "../../components/StatusTicker";
 import { useAuth } from "../../lib/AuthContext";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
 import { LogOut, User, Settings, Home } from "lucide-react";
+import { Navigation } from "../../components/citizen/Navigation";
+import { AlertPanel } from "../../components/citizen/AlertPanel";
+import { MapView } from "../../components/citizen/MapView";
+import { SidePanel } from "../../components/citizen/SidePanel";
+import { AlertsSection, realTimeAlerts } from "../../components/admin/AlertsSection";
+import { ReportsSection } from "../../components/ReportsSection";
+import { CommunitySection } from "../../components/citizen/CommunitySection";
+import { StatusTicker } from "../../components/StatusTicker";
 
 export function CitizenDashboard() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+
+
   const [activeTab, setActiveTab] = useState("map");
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
   const [selectedAlertId, setSelectedAlertId] = useState<number>();
   const [mapCenter, setMapCenter] = useState<[number, number]>();
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
+  
   const handleClose = () => {
     setSelectedLocation(null);
   };
@@ -56,12 +59,6 @@ export function CitizenDashboard() {
     setMapCenter(coordinates);
   };
 
-  // If user is not authenticated, redirect to login
-  if (!user) {
-    navigate('/login');
-    return null;
-  }
-
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
@@ -74,9 +71,9 @@ export function CitizenDashboard() {
             <Button variant="outline" className="w-12 h-12 rounded-full p-0">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
-                <AvatarFallback>
+                 <AvatarFallback>
                   {user?.email?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
+                </AvatarFallback> 
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
