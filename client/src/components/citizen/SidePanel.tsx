@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { X, MapPin } from "lucide-react";
+import { X, MapPin, UserCircle } from "lucide-react";
 import { useMap } from "react-leaflet";
+import { useAuth } from "../../lib/AuthContext";
 
 interface SidePanelProps {
   location: {
@@ -24,14 +25,17 @@ interface SidePanelProps {
     };
   };
   onClose: () => void;
+  onViewLocation: (coordinates: [number, number]) => void;
 }
 
-export const SidePanel = ({ location, onClose }: SidePanelProps) => {
+export const SidePanel = ({ location, onClose, onViewLocation }: SidePanelProps) => {
   const map = useMap();
+  const { isAdmin } = useAuth();
 
   const handleViewOnMap = () => {
     if (location.coordinates) {
       map.setView(location.coordinates as [number, number], 13);
+      onViewLocation(location.coordinates as [number, number]);
     }
   };
 
@@ -254,6 +258,13 @@ export const SidePanel = ({ location, onClose }: SidePanelProps) => {
             </button>
           </div>
         </Card>
+
+        {/* Admin Notice - New Section */}
+        {isAdmin && (
+          <div className="bg-blue-100 p-2 rounded-md mb-4">
+            <p className="text-blue-800 font-medium">Hello Admin</p>
+          </div>
+        )}
       </div>
     </div>
   );

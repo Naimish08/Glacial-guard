@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { LoginDialog } from "../LoginDialog";
 
 interface NavigationProps {
   activeTab: string;
@@ -14,8 +15,8 @@ const tabs = [
 
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   return (
-    <nav className="h-16 bg-card border-b border-border shadow-soft">
-      <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center space-x-3">
           <div className="text-2xl">🏔️</div>
@@ -48,6 +49,10 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 bg-safe rounded-full animate-pulse-glow"></div>
           <span className="text-sm text-muted-foreground">System Active</span>
+        </div>
+
+        <div className="flex items-center">
+          <LoginDialog />
         </div>
       </div>
     </nav>

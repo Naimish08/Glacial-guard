@@ -2,6 +2,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useMap } from "react-leaflet";
+import { useAuth } from "../../lib/AuthContext";
+import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+import { AlertCircle } from "lucide-react";
 
 // Mock alert data
 const alerts = [
@@ -54,6 +57,8 @@ export const AlertPanel = ({
 	selectedAlertId,
 	className,
 }: AlertPanelProps) => {
+	const { isAdmin } = useAuth();
+
 	const handleAlertClick = (alert: any) => {
 		// Assuming each alert has coordinates in [longitude, latitude] format
 		if (alert.coordinates) {
@@ -206,6 +211,18 @@ export const AlertPanel = ({
 						<span>🟢 15 Safe</span>
 					</div>
 				</div>
+			</div>
+
+			<div className="space-y-4">
+				{isAdmin && (
+					<Alert variant="default" className="bg-blue-50 border-blue-200">
+						<AlertCircle className="h-4 w-4 text-blue-600" />
+						<AlertTitle className="text-blue-800">Welcome Admin</AlertTitle>
+						<AlertDescription className="text-blue-700">
+							You are logged in as an administrator
+						</AlertDescription>
+					</Alert>
+				)}
 			</div>
 		</div>
 	);

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Navigation } from "@/components/Navigation";
-import { MapView } from "@/components/MapView";
-import { AlertPanel } from "@/components/AlertPanel";
-import { AlertsSection } from "@/components/AlertsSection";
+import { Navigation } from "@/components/admin/Navigation";
+import { MapView } from "@/components/admin/MapView";
+import { AlertPanel } from "@/components/admin/AlertPanel";
+import { AlertsSection } from "@/components/admin/AlertsSection";
 import { ReportsSection } from "@/components/ReportsSection";
-import { CommunitySection } from "@/components/CommunitySection";
+import { CommunitySection } from "@/components/citizen/CommunitySection";
 import { StatusTicker } from "@/components/StatusTicker";
-import { SidePanel } from "@/components/SidePanel";
-import { realTimeAlerts } from "@/components/AlertsSection";
+import { SidePanel } from "@/components/citizen/SidePanel";
+import { realTimeAlerts } from "@/components/admin/AlertsSection";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("map");
@@ -31,7 +31,7 @@ const Index = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} className="flex-none" />
+      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       <StatusTicker className="flex-none" />
       
       <div className="flex-1 flex overflow-hidden">
@@ -54,6 +54,11 @@ const Index = () => {
                 <SidePanel 
                   location={selectedLocation} 
                   onClose={() => setSelectedLocation(null)} 
+                  onViewLocation={() => {
+                    if (selectedLocation?.coordinates) {
+                      setMapCenter(selectedLocation.coordinates);
+                    }
+                  }}
                 />
               )}
             </div>

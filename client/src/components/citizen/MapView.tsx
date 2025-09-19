@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, GeoJSON, LayersControl, Marker, Popup, useMap } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import { himalayanRegions, floodCorridors } from "./geojson";
-import { realTimeAlerts } from './AlertsSection';
+import { himalayanRegions, floodCorridors } from "../geojson";
+import { realTimeAlerts } from '../admin/AlertsSection';
 import { Icon } from 'leaflet';
 import { Feature, GeoJsonObject } from "geojson";
 import { Layer, PathOptions } from "leaflet";
@@ -87,11 +87,14 @@ export const MapView: React.FC<MapViewProps> = ({
 
       // Highlight selected feature
       if (selectedLocation === props.name) {
-        layer.setStyle({
-          weight: 3,
-          color: "hsl(var(--primary))",
-          fillOpacity: 0.8
-        });
+        // Only Path layers (Polygon, Polyline, etc.) have setStyle
+        if ((layer as any).setStyle) {
+          (layer as import("leaflet").Path).setStyle({
+            weight: 3,
+            color: "hsl(var(--primary))",
+            fillOpacity: 0.8
+          });
+        }
       }
 
       // Click handler
@@ -181,7 +184,7 @@ export const MapView: React.FC<MapViewProps> = ({
         {realTimeAlerts.map((alert) => (
           <Marker
             key={alert.id}
-            position={alert.coordinates}
+            position={alert.coordinates as [number, number]}
             icon={customIcon}
             eventHandlers={{
               click: () => onLocationSelect({
