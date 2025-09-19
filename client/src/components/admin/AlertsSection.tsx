@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import MapViewSatellite from "./MapViewSatellite";
 
 export const realTimeAlerts = [
 	{
@@ -341,10 +342,12 @@ export const AlertsSection = () => {
 								<span>🛰️</span>
 								<span>Satellite Imagery</span>
 							</h3>
-							<div className="aspect-video bg-muted rounded-lg mb-3 flex items-center justify-center">
-								<p className="text-muted-foreground">
-									Satellite view loading...
-								</p>
+							<div className="h-[400px] w-full mb-4"> {/* Added fixed height container */}
+								<MapViewSatellite 
+									onLocationSelect={function (location: any): void {
+										throw new Error("Function not implemented.");
+									}}
+								/>
 							</div>
 							<div className="flex justify-between text-sm">
 								<span className="text-muted-foreground">
