@@ -1,17 +1,18 @@
 import express from "express";
 import cors from "cors";
-import routes from "../routes"; // Corrected path
+import dotenv from "dotenv";
+import routes from "../routes/index.ts";
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to allow requests from our React client
 app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
-
-// Main API routes
 app.use("/api", routes);
 
-app.listen(port, () =>
-  console.log(`🚀 Server running on http://localhost:${port}`)
-);
+app.listen(port, () => {
+  console.log(`🚀 Server running on http://localhost:${port}`);
+  console.log(`📱 Alert API: http://localhost:${port}/api/alerts`);
+});
