@@ -13,15 +13,23 @@ import { SidePanel } from "../../components/citizen/SidePanel";
 import { AlertsSection, realTimeAlerts } from "../../components/admin/AlertsSection";
 import { ReportsSection } from "../../components/ReportsSection";
 import { CommunitySection } from "../../components/citizen/CommunitySection";
-import { StatusTicker } from "../../components/StatusTicker";
+
+// Assuming you have a separate StatusTicker component
+// If not, you can create it as shown below
+const StatusTicker = () => {
+  return (
+    <div className="flex items-center justify-center space-x-2 h-10 py-2 bg-background border-b border-border">
+      <div className="w-2 h-2 bg-safe rounded-full animate-pulse-glow"></div>
+      <span className="text-sm text-muted-foreground">System Active</span>
+    </div>
+  );
+};
 
 export function CitizenDashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-
-
-  const [activeTab, setActiveTab] = useState("map");
+  const [activeTab, setActiveTab] = useState<any>("map");
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
   const [selectedAlertId, setSelectedAlertId] = useState<number>();
   const [mapCenter, setMapCenter] = useState<[number, number]>();
@@ -61,17 +69,22 @@ export function CitizenDashboard() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
+      {/* 1. Main Navigation Bar (fixed at top with z-index 100) */}
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <StatusTicker className="flex-none" />
+      
+      {/* 2. Status Ticker (fixed below nav bar with z-index 90) */}
+      <div className="fixed top-14 left-0 right-0 z-90">
+        <StatusTicker />
+      </div>
 
-      {/* User Profile Dropdown */}
-      <div className="fixed top-4 right-4 z-50">
+      {/* 3. User Profile Dropdown */}
+      <div className="fixed top-4 right-4 z-[110]">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-12 h-12 rounded-full p-0">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
-                 <AvatarFallback>
+                <AvatarFallback>
                   {user?.email?.charAt(0).toUpperCase() || 'U'}
                 </AvatarFallback> 
               </Avatar>
@@ -110,7 +123,10 @@ export function CitizenDashboard() {
         </DropdownMenu>
       </div>
       
-      <div className="flex-1 flex overflow-hidden">
+      {/* 4. Main content, with padding to offset the fixed header elements */}
+      {/* The combined height of the nav (h-14) and ticker (h-10) is ~56px + 40px = 96px */}
+      {/* So, we use a padding top of pt-[96px] */}
+      <div className="flex-1 flex overflow-hidden pt-[96px]">
         {activeTab === "map" ? (
           <>
             <AlertPanel 
@@ -149,12 +165,12 @@ export function CitizenDashboard() {
       </div>
     </div>
   );
-  
 }
 
+// NOTE: This interface should be moved to a separate types file for better organization.
 interface MapViewProps {
   onLocationSelect: (location: any) => void;
   selectedLocation?: string;
   onPanToLocation?: [number, number];
-  children?: React.ReactNode; // Add this
+  children?: React.ReactNode; 
 }

@@ -15,7 +15,7 @@ const tabs = [
 
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="fixed top-0 left-0 right-0 z-[100] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
         {/* Logo and Title */}
         <div className="flex items-center space-x-3">
@@ -45,14 +45,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           ))}
         </div>
         
-        {/* Status Indicator */}
-        <div className="flex items-center space-x-5">
-          <div className="w-2 h-2 bg-safe rounded-full animate-pulse-glow"></div>
-          <span className="text-sm text-muted-foreground">System Active</span>
-        </div>
-
-        <div className="flex items-center">
-        </div>
+        {/* Status Indicator has been removed from here */}
       </div>
     </nav>
   );
