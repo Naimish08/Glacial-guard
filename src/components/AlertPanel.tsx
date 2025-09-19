@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useMap } from "react-leaflet";
+import { himalayanRegions } from "./geojson"; // <-- Import glaciers
 
 // Mock alert data
 const alerts = [
@@ -43,9 +43,20 @@ const alerts = [
 	},
 ];
 
+// Get all glaciers from geojson
+const glaciers = (himalayanRegions as any).features.map((feature: any, idx: number) => ({
+	id: `glacier-${idx}`,
+	name: feature.properties?.name ?? "Unknown Glacier",
+	status: feature.properties?.status ?? "unknown",
+	riskScore: feature.properties?.riskScore ?? "-",
+	country: feature.properties?.country ?? "Nepal",
+	elevation: feature.properties?.elevation ?? "-",
+	coordinates: feature.properties?.center ?? [0, 0],
+}));
+
 interface AlertPanelProps {
 	onAlertSelect: (coordinates: [number, number]) => void;
-	selectedAlertId?: number;
+	selectedAlertId?: number | string;
 	className?: string;
 }
 
@@ -54,10 +65,9 @@ export const AlertPanel = ({
 	selectedAlertId,
 	className,
 }: AlertPanelProps) => {
-	const handleAlertClick = (alert: any) => {
-		// Assuming each alert has coordinates in [longitude, latitude] format
-		if (alert.coordinates) {
-			onAlertSelect(alert.coordinates);
+	const handleAlertClick = (coords: [number, number], id: number | string) => {
+		if (coords) {
+			onAlertSelect(coords);
 		}
 	};
 
@@ -107,7 +117,12 @@ export const AlertPanel = ({
 							"p-3 shadow-card hover:shadow-soft transition-shadow cursor-pointer",
 							selectedAlertId === alert.id && "ring-2 ring-primary"
 						)}
-						onClick={() => handleAlertClick(alert)}
+						onClick={() =>
+							handleAlertClick(
+								[alert.coordinates[0], alert.coordinates[1]] as [number, number],
+								alert.id
+							)
+						}
 					>
 						{/* Alert Header */}
 						<div className="flex items-start justify-between mb-2">
@@ -192,6 +207,36 @@ export const AlertPanel = ({
 						</div>
 					</Card>
 				))}
+			</div>
+
+			{/* All Glaciers Section */}
+			<div className="mt-6">
+				<h3 className="text-base font-semibold mb-2 flex items-center gap-2">
+					🧊 All Glaciers
+				</h3>
+				<div className="space-y-2">
+					{glaciers.map((g) => (
+						<Card
+							key={g.id}
+							className={cn(
+								"p-2 flex items-center gap-3 cursor-pointer hover:bg-accent/10 transition",
+								selectedAlertId === g.id && "ring-2 ring-primary"
+							)}
+							onClick={() => handleAlertClick(g.coordinates, g.id)}
+						>
+							<span className="text-lg">{getRiskIcon(g.status)}</span>
+							<div className="flex-1">
+								<div className="font-medium">{g.name}</div>
+								<div className="text-xs text-muted-foreground">
+									{g.country} • {g.elevation}
+								</div>
+							</div>
+							<Badge variant={getRiskBadgeVariant(g.status)} className="text-xs">
+								{g.status}
+							</Badge>
+						</Card>
+					))}
+				</div>
 			</div>
 
 			{/* Alert Summary */}
