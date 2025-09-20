@@ -5,46 +5,23 @@ import { useMap } from "react-leaflet";
 import { useAuth } from "../../lib/AuthContext";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { AlertCircle } from "lucide-react";
+import { himalayanRegions } from "../geojson";
 
-// Mock alert data
-const alerts = [
-	{
-		id: 1,
-		location: "Imja Glacial Lake",
-		risk: "danger",
-		score: 8.5,
-		timestamp: "2 min ago",
-		reason: "Rapid ice melt detected",
-		shap: "Temperature +3.2°C, Precipitation +15%",
-		forecast: "24-48 hours",
-		villages: ["Dingboche", "Chukhung"],
-		coordinates: [86.925, 27.8397],
-	},
-	{
-		id: 2,
-		location: "Lumding Lake",
-		risk: "danger",
-		score: 7.9,
-		timestamp: "15 min ago",
-		reason: "Moraine instability",
-		shap: "Seismic activity +25%, Ice thickness -8%",
-		forecast: "3-5 days",
-		villages: ["Lumding", "Thame"],
-		coordinates: [87.0715, 27.8319],
-	},
-	{
-		id: 3,
-		location: "Chamlang South",
-		risk: "watch",
-		score: 5.8,
-		timestamp: "1 hour ago",
-		reason: "Increased water level",
-		shap: "Water flow +12%, Surface area +5%",
-		forecast: "1-2 weeks",
-		villages: ["Hongde", "Hinku"],
-		coordinates: [86.9293, 27.8417],
-	},
-];
+// Generate alerts from GeoJSON glacier data
+const alerts = himalayanRegions.features
+	.filter((feature: any) => feature.properties.status === "danger" || feature.properties.status === "watch")
+	.map((feature: any, index: number) => ({
+		id: index + 1,
+		location: feature.properties.name,
+		risk: feature.properties.status,
+		score: feature.properties.riskScore || (feature.properties.status === "danger" ? 8.5 : 5.8),
+		timestamp: feature.properties.lastUpdated ? `${Math.floor(Math.random() * 60)} min ago` : "1 hour ago",
+		reason: feature.properties.riskFactors ? feature.properties.riskFactors.join(", ") : "Risk factors detected",
+		shap: `Temperature ${feature.properties.temperature}, Elevation ${feature.properties.elevation}`,
+		forecast: feature.properties.status === "danger" ? "24-48 hours" : "1-2 weeks",
+		villages: ["Nearby villages"],
+		coordinates: feature.properties.center || [0, 0],
+	}));
 
 interface AlertPanelProps {
 	onAlertSelect: (coordinates: [number, number]) => void;
