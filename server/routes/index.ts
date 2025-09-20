@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import { getProcessedData } from '../controllers/dataController.ts';
 import alertRoutes from './alerts.ts';
+import communityRoutes from './community.ts';
 
 const router = Router();
 
 // Existing routes
 router.get('/processed-data', getProcessedData);
 router.use('/alerts', alertRoutes);
+router.use('/community', communityRoutes);
 
 // Add health check endpoint
 router.get('/health', (req, res) => {

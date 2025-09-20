@@ -7,10 +7,9 @@ interface NavigationProps {
 }
 
 const tabs = [
-  { id: "map", label: "Map View", icon: "🗺️" },
+  { id: "dashboard", label: "Dashboard", icon: "🏠" },
   { id: "alerts", label: "Alerts", icon: "⚠️" },
-  { id: "reports", label: "Reports", icon: "📊" },
-  { id: "community", label: "Community Feedback", icon: "💬" },
+  { id: "community", label: "Community", icon: "💬" },
 ];
 
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
