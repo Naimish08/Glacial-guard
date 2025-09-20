@@ -5,24 +5,29 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../../lib/AuthContext";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, MessageSquare } from "lucide-react";
 import { himalayanRegions } from "../geojson";
+import type { FeatureCollection } from "geojson";
 
-// Generate alerts from GeoJSON glacier data
-const alerts = himalayanRegions.features
-	.filter((feature: any) => feature.properties.status === "danger" || feature.properties.status === "watch")
-	.map((feature: any, index: number) => ({
-		id: index + 1,
-		location: feature.properties.name,
-		risk: feature.properties.status,
-		score: feature.properties.riskScore || (feature.properties.status === "danger" ? 8.5 : 5.8),
-		timestamp: feature.properties.lastUpdated ? `${Math.floor(Math.random() * 60)} min ago` : "1 hour ago",
-		reason: feature.properties.riskFactors ? feature.properties.riskFactors.join(", ") : "Risk factors detected",
-		shap: `Temperature ${feature.properties.temperature}, Elevation ${feature.properties.elevation}`,
-		forecast: feature.properties.status === "danger" ? "24-48 hours" : "1-2 weeks",
-		villages: ["Nearby villages"],
-		coordinates: feature.properties.center || [0, 0],
-	}));
+const features = (himalayanRegions as FeatureCollection).features;
+
+const alerts = features
+    .filter((feature: any) => feature.properties.status === "danger" || feature.properties.status === "watch")
+    .map((feature: any, index: number) => ({
+        id: index + 1,
+        location: feature.properties.name,
+        risk: feature.properties.status,
+        score: feature.properties.riskScore || (feature.properties.status === "danger" ? 8.5 : 5.8),
+        timestamp: feature.properties.lastUpdated ? `${Math.floor(Math.random() * 60)} min ago` : "1 hour ago",
+        reason: feature.properties.riskFactors ? feature.properties.riskFactors.join(", ") : "Risk factors detected",
+        shap: `Temperature ${feature.properties.temperature}, Elevation ${feature.properties.elevation}`,
+        forecast: feature.properties.status === "danger" ? "24-48 hours" : "1-2 weeks",
+        villages: feature.properties.villages || ["Nearby villages"],
+        coordinates: feature.properties.center || [0, 0],
+        localLanguages: feature.properties.localLanguages || ["Hindi", "English"],
+        phoneNumbers: feature.properties.phoneNumbers || [],
+        region: feature.properties.region || "",
+    }));
 
 interface AlertPanelProps {
     onAlertSelect: (coordinates: [number, number]) => void;
@@ -35,7 +40,7 @@ export const AlertPanel = ({
     selectedAlertId,
     className,
 }: AlertPanelProps) => {
-    const { role, user } = useAuth(); // Use role instead of isAdmin
+    const { role } = useAuth();
     const [sendingAlerts, setSendingAlerts] = useState<Set<number>>(new Set());
 
     const handleAlertClick = (alert: any) => {
@@ -46,35 +51,25 @@ export const AlertPanel = ({
 
     const sendEmergencyAlert = async (alert: any) => {
         setSendingAlerts(prev => new Set(prev).add(alert.id));
-        
         try {
-            // For multilingual alerts, use the new endpoint
             const alertData = {
                 glacierName: alert.location,
                 riskScore: alert.score,
                 floodTimeMinutes: 45,
                 evacuationTimeMinutes: 30
             };
-
-            // Send multilingual emergency alert
             const response = await fetch('http://localhost:3000/api/alerts/multilingual-emergency', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(alertData)
             });
-
             const result = await response.json();
-            
             if (result.status === 'multilingual_emergency_alert_dispatched') {
-                console.log(`Multilingual emergency alert sent for ${alert.location}:`, result);
                 alert(`✅ Emergency alert sent in ${result.languagesUsed.length} languages to ${result.results.summary.totalSent} contacts for ${alert.location}`);
             } else {
                 throw new Error('Failed to send alert');
             }
         } catch (error) {
-            console.error('Error sending emergency alert:', error);
             alert(`❌ Failed to send emergency alert for ${alert.location}`);
         } finally {
             setSendingAlerts(prev => {
@@ -116,7 +111,7 @@ export const AlertPanel = ({
             </div>
 
             <div className="space-y-3">
-                {glacierAlerts.map((alert) => (
+                {alerts.map((alert) => (
                     <Card
                         key={alert.id}
                         className={cn(
@@ -172,13 +167,11 @@ export const AlertPanel = ({
                                         {alert.forecast}
                                     </span>
                                 </div>
-                                
-                                {/* Show SMS button only for admin users */}
                                 {role === 'citizen' && (
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={(e) => {
+                                        onClick={e => {
                                             e.stopPropagation();
                                             sendEmergencyAlert(alert);
                                         }}
@@ -205,7 +198,7 @@ export const AlertPanel = ({
                                     🏘️ Affected Areas:
                                 </p>
                                 <div className="flex flex-wrap gap-1">
-                                    {alert.villages.map((village) => (
+                                    {alert.villages.map((village: string) => (
                                         <Badge
                                             key={village}
                                             variant="outline"
@@ -259,11 +252,11 @@ export const AlertPanel = ({
                         <AlertCircle className="h-4 w-4 text-blue-600" />
                         <AlertTitle className="text-blue-800">Administrator Access</AlertTitle>
                         <AlertDescription className="text-blue-700">
-                            You have admin privileges with multilingual SMS alert capabilities for all {glacierAlerts.length} glacier locations
+                            You have admin privileges with multilingual SMS alert capabilities for all {alerts.length} glacier locations
                         </AlertDescription>
                     </Alert>
                 )}
-                
+
                 {role === 'citizen' && (
                     <Alert variant="default" className="bg-green-50 border-green-200">
                         <AlertCircle className="h-4 w-4 text-green-600" />
