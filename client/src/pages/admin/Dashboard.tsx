@@ -3,6 +3,7 @@ import { MapView } from "../../components/admin/MapView";
 import { SidePanel } from "../../components/admin/SidePanel";
 import { Navigation } from "../../components/admin/Navigation";
 import { AlertsSection } from "../../components/admin/AlertsSection";
+import { CommunityManagement } from "../../components/admin/CommunityManagement";
 import { useAuth } from "../../lib/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -112,6 +113,7 @@ export function AdminDashboard() {
             </div>
           )}
           {activeTab === "alerts" && <AlertsSection />}
+          {activeTab === "community" && <CommunityManagement />}
         </main>
       </div>
     </div>
