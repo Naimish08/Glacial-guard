@@ -7,7 +7,7 @@ export const himalayanRegions: GeoJsonObject = {
       "type": "Feature",
       "properties": {
         "name": "Khumbu Glacier",
-        "status": "danger",
+        "status": "safe",
         "riskScore": 85,
         "elevation": "4900m",
         "country": "Nepal",
@@ -20,7 +20,9 @@ export const himalayanRegions: GeoJsonObject = {
           "stability": "Critical",
           "thickness": "25-40m",
           "composition": "Loose debris, ice core"
-        }
+        },
+        "center": [27.995, 86.835], // [lat, lng]
+        "radius": 3000 // in meters
       },
       "geometry": {
         "type": "Polygon",
@@ -54,7 +56,9 @@ export const himalayanRegions: GeoJsonObject = {
           "stability": "Stable",
           "thickness": "20-30m",
           "composition": "Debris-covered ice"
-        }
+        },
+        "center": [30.935, 79.093], // [lat, lng]
+        "radius": 3000 // in meters
       },
       "geometry": {
         "type": "Polygon",
@@ -88,7 +92,9 @@ export const himalayanRegions: GeoJsonObject = {
           "stability": "Stable",
           "thickness": "15-25m",
           "composition": "Ice with rock debris"
-        }
+        },
+        "center": [27.755, 88.243], // [lat, lng]
+        "radius": 3000 // in meters
       },
       "geometry": {
         "type": "Polygon",
@@ -122,7 +128,9 @@ export const himalayanRegions: GeoJsonObject = {
           "stability": "Critical",
           "thickness": "30-50m",
           "composition": "Loose debris, ice core"
-        }
+        },
+        "center": [35.490, 77.045], // [lat, lng]
+        "radius": 3000 // in meters
       },
       "geometry": {
         "type": "Polygon",
@@ -156,7 +164,9 @@ export const himalayanRegions: GeoJsonObject = {
           "stability": "Unstable",
           "thickness": "10-20m",
           "composition": "Ice with water pockets"
-        }
+        },
+        "center": [28.020, 86.710], // [lat, lng]
+        "radius": 3000 // in meters
       },
       "geometry": {
         "type": "Polygon",
@@ -191,7 +201,9 @@ export const himalayanRegions: GeoJsonObject = {
           "stability": "Critical",
           "thickness": "25-40m",
           "composition": "Loose debris, ice core"
-        }
+        },
+        "center": [27.903, 86.938], // [lat, lng]
+        "radius": 3000 // in meters
       },
       "geometry": {
         "type": "Polygon",
@@ -204,7 +216,194 @@ export const himalayanRegions: GeoJsonObject = {
           [86.9285, 27.8989]
         ]]
       }
+    }, // <--- ADD THIS COMMA
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bara Shigri Glacier",
+        "status": "watch",
+        "elevation": "5000m",
+        "country": "India",
+        "riskFactors": ["melting", "moraine instability"],
+        "lastUpdated": "2025-09-11",
+        "area": "1.0 km²",
+        "volume": "45 million m³",
+        "temperature": "-1.9°C",
+        "morainCondition": {
+          "stability": "Unstable",
+          "thickness": "20-35m",
+          "composition": "Ice and debris"
+        },
+        "center": [32.200, 77.580],
+        "radius": 6300
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [77.570, 32.190],
+          [77.590, 32.190],
+          [77.590, 32.210],
+          [77.570, 32.210],
+          [77.570, 32.190]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Baspa Glacier",
+        "status": "safe",
+        "elevation": "4700m",
+        "country": "India",
+        "riskFactors": ["debris cover", "slow retreat"],
+        "lastUpdated": "2025-09-11",
+        "area": "0.6 km²",
+        "volume": "20 million m³",
+        "temperature": "-1.5°C",
+        "morainCondition": {
+          "stability": "Stable",
+          "thickness": "15-25m",
+          "composition": "Rocky debris"
+        },
+        "center": [31.350, 78.400],
+        "radius": 3300
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [78.390, 31.340],
+          [78.410, 31.340],
+          [78.410, 31.360],
+          [78.390, 31.360],
+          [78.390, 31.340]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Durung-Drung Glacier",
+        "status": "watch",
+        "elevation": "5200m",
+        "country": "India",
+        "riskFactors": ["glacial retreat", "ice loss"],
+        "lastUpdated": "2025-09-11",
+        "area": "0.9 km²",
+        "volume": "42 million m³",
+        "temperature": "-2.0°C",
+        "morainCondition": {
+          "stability": "Unstable",
+          "thickness": "25-35m",
+          "composition": "Mixed debris"
+        },
+        "center": [33.790, 76.280],
+        "radius": 4700
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [76.270, 33.780],
+          [76.290, 33.780],
+          [76.290, 33.800],
+          [76.270, 33.800],
+          [76.270, 33.780]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Rongbuk Glacier",
+        "status": "danger",
+        "elevation": "5100m",
+        "country": "Tibet",
+        "riskFactors": ["GLOF risk", "ice collapse"],
+        "lastUpdated": "2025-09-11",
+        "area": "1.1 km²",
+        "volume": "48 million m³",
+        "temperature": "-2.2°C",
+        "morainCondition": {
+          "stability": "Critical",
+          "thickness": "30-45m",
+          "composition": "Loose debris"
+        },
+        "center": [28.120, 86.850],
+        "radius": 5200
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [86.840, 28.110],
+          [86.860, 28.110],
+          [86.860, 28.130],
+          [86.840, 28.130],
+          [86.840, 28.110]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Samudra Tapu Glacier",
+        "status": "watch",
+        "elevation": "5050m",
+        "country": "India",
+        "riskFactors": ["climate variability", "ice melt"],
+        "lastUpdated": "2025-09-11",
+        "area": "0.8 km²",
+        "volume": "33 million m³",
+        "temperature": "-1.7°C",
+        "morainCondition": {
+          "stability": "Moderate",
+          "thickness": "20-30m",
+          "composition": "Ice and gravel"
+        },
+        "center": [32.475, 77.490],
+        "radius": 5590
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [77.480, 32.465],
+          [77.500, 32.465],
+          [77.500, 32.485],
+          [77.480, 32.485],
+          [77.480, 32.465]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sonapani Glacier",
+        "status": "safe",
+        "elevation": "4950m",
+        "country": "India",
+        "riskFactors": ["minor melt"],
+        "lastUpdated": "2025-09-11",
+        "area": "0.4 km²",
+        "volume": "15 million m³",
+        "temperature": "-1.4°C",
+        "morainCondition": {
+          "stability": "Stable",
+          "thickness": "10-15m",
+          "composition": "Thin ice with rock cover"
+        },
+        "center": [32.440, 77.370],
+        "radius": 2330
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [77.360, 32.430],
+          [77.380, 32.430],
+          [77.380, 32.450],
+          [77.360, 32.450],
+          [77.360, 32.430]
+        ]]
+      }
     }
+
   ]
 };
 
@@ -254,4 +453,5 @@ export const floodCorridors: GeoJsonObject = {
       }
     }
   ]
+  
 };

@@ -2,6 +2,7 @@ import { AlertPanel } from "../../components/admin/AlertPanel";
 import { MapView } from "../../components/admin/MapView";
 import { SidePanel } from "../../components/admin/SidePanel";
 import { Navigation } from "../../components/admin/Navigation";
+import { AlertsSection } from "../../components/admin/AlertsSection";
 import { useAuth } from "../../lib/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -47,8 +48,8 @@ export function AdminDashboard() {
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       {/* 2. Status Ticker (fixed below the nav bar) */}
-      {/* The `top-14` class assumes the navigation bar has a height of h-14 (56px) */}
-      <div className="fixed top-14 left-0 right-0 z-[90]">
+      {/* The `top-16` class assumes the navigation bar has a height of h-16 (64px) */}
+      <div className="fixed top-16 left-0 right-0 z-[90]">
         <StatusTicker />
       </div>
 
@@ -100,13 +101,17 @@ export function AdminDashboard() {
       </div>
 
       {/* 4. Main content, correctly pushed down by both fixed elements */}
-      {/* The combined height of the nav (h-14) and ticker (h-10) is ~56px + 40px = 96px */}
-      {/* So, we use a padding top of pt-[96px] */}
-      <div className="flex flex-1 pt-[96px]">
-        <SidePanel onClose={() => {}} location={null} />
+      {/* The combined height of the nav (h-16) and ticker (h-12) is ~64px + 48px = 112px */}
+      {/* So, we use a padding top of pt-[112px] */}
+      <div className="flex flex-1 pt-[112px]">
         <main className="flex-1 p-6">
-          <AlertPanel onAlertSelect={() => {}} />
-          <MapView onLocationSelect={() => {}} />
+          {activeTab === "dashboard" && (
+            <div className="space-y-6">
+              <AlertPanel onAlertSelect={() => {}} />
+              <MapView onLocationSelect={() => {}} />
+            </div>
+          )}
+          {activeTab === "alerts" && <AlertsSection />}
         </main>
       </div>
     </div>

@@ -10,7 +10,7 @@ import { Navigation } from "../../components/citizen/Navigation";
 import { AlertPanel } from "../../components/citizen/AlertPanel";
 import { MapView } from "../../components/citizen/MapView";
 import { SidePanel } from "../../components/citizen/SidePanel";
-import { AlertsSection, realTimeAlerts } from "../../components/admin/AlertsSection";
+import { AlertsSection, realTimeAlerts } from "../../components/citizen/AlertsSection";
 import { ReportsSection } from "../../components/ReportsSection";
 import { CommunitySection } from "../../components/citizen/CommunitySection";
 
@@ -73,7 +73,7 @@ export function CitizenDashboard() {
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       {/* 2. Status Ticker (fixed below nav bar with z-index 90) */}
-      <div className="fixed top-14 left-0 right-0 z-90">
+      <div className="fixed top-16 left-0 right-0 z-[90]">
         <StatusTicker />
       </div>
 
@@ -124,9 +124,9 @@ export function CitizenDashboard() {
       </div>
       
       {/* 4. Main content, with padding to offset the fixed header elements */}
-      {/* The combined height of the nav (h-14) and ticker (h-10) is ~56px + 40px = 96px */}
-      {/* So, we use a padding top of pt-[96px] */}
-      <div className="flex-1 flex overflow-hidden pt-[96px]">
+      {/* The combined height of the nav (h-16) and ticker (h-12) is ~64px + 48px = 112px */}
+      {/* So, we use a padding top of pt-[112px] */}
+      <div className="flex-1 flex overflow-hidden pt-[112px]">
         {activeTab === "map" ? (
           <>
             <AlertPanel 
