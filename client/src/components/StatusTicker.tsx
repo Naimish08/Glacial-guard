@@ -46,10 +46,10 @@ export const StatusTicker: React.FC<StatusTickerProps> = ({ className }) => {
 	};
 
 	return (
-		<div className="h-12 bg-secondary/10 border-t border-border overflow-hidden">
+		<div className="h-12 bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-border overflow-hidden shadow-sm">
 			<div className="flex items-center h-full">
 				{/* Ticker Label */}
-				<div className="flex-shrink-0 bg-secondary text-secondary-foreground px-4 h-full flex items-center">
+				<div className="flex-shrink-0 bg-primary text-primary-foreground px-4 h-full flex items-center shadow-sm">
 					<span className="text-sm font-medium flex items-center space-x-2">
 						<span>🌊</span>
 						<span>Live Status</span>
@@ -86,8 +86,8 @@ export const StatusTicker: React.FC<StatusTickerProps> = ({ className }) => {
 				</div>
 
 				{/* Last Update */}
-				<div className="flex-shrink-0 bg-muted/50 px-4 h-full flex items-center">
-					<span className="text-xs text-muted-foreground">
+				<div className="flex-shrink-0 bg-white/80 border-l border-border px-4 h-full flex items-center shadow-sm">
+					<span className="text-xs text-muted-foreground font-medium">
 						Last updated: {new Date().toLocaleTimeString()}
 					</span>
 				</div>

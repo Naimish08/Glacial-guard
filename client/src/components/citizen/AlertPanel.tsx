@@ -163,8 +163,8 @@ export const AlertPanel = ({
 										{alert.forecast}
 									</span>
 								</div>
-								<div className="text-primary hover:text-primary/80 cursor-pointer">
-									📲 Send SMS
+								<div className="text-muted-foreground">
+									📊 View Only
 								</div>
 							</div>
 

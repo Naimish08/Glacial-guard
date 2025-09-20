@@ -30,12 +30,9 @@ export function LoginDialog() {
     setIsEmailConfirmationError(false);
     try {
       await login(email, password);
-      // Navigate based on role
-      if (role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/citizen');
-      }
+      // Navigation will be handled by the AuthContext or dashboard components
+      // The role will be available after the login completes
+      navigate('/');
     } catch (err: any) {
       const errorMessage = err.message || "Login failed";
       setError(errorMessage);
