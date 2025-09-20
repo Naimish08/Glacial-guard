@@ -1,14 +1,16 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import time
 import numpy as np
 import joblib
 import pickle
 
 app = Flask(__name__)
-# Allow requests from our Express server's origin
-CORS(app, resources={r"/*": {"origins": "http://localhost:5000"}})
-
+# Configure CORS to allow requests from frontend (port 8080) and other origins
+CORS(app, 
+     origins=['http://localhost:8080', 'http://localhost:3000', 'http://127.0.0.1:8080', 'http://127.0.0.1:3000'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allow_headers=['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'],
+     supports_credentials=True)
 
 # Load saved models and artifacts once on startup
 simple_lr = joblib.load("simple_lr.pkl")
@@ -17,9 +19,27 @@ scaler = joblib.load("scaler.pkl")
 with open("features.pkl", "rb") as f:
     features = pickle.load(f)
 
-@app.route('/predict', methods=['POST'])
+@app.before_request
+def log_request_info():
+    print(f"[Flask] Incoming {request.method} request from {request.origin} to {request.path}")
+
+@app.after_request
+def log_response_info(response):
+    print(f"[Flask] Response headers: {dict(response.headers)}")
+    # Ensure CORS headers are present
+    response.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin', '*')
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Access-Control-Allow-Credentials'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response
+
+@app.route('/predict', methods=['POST', 'OPTIONS'])
 def predict():
+    if request.method == 'OPTIONS':
+        # Handle preflight request
+        return '', 200
     try:
+        print("[Flask] /predict called")
         data = request.get_json()
 
         glacier_name = data.get("glacier_name", "Unknown")
