@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import { LoginDialog } from "../LoginDialog";
+import { useTranslations } from "../../lib/TranslationContext";
+import { LanguageSwitcher } from "../ui/language-switcher";
 
 interface NavigationProps {
   activeTab: string;
@@ -7,12 +9,14 @@ interface NavigationProps {
 }
 
 const tabs = [
-  { id: "dashboard", label: "Dashboard", icon: "🏠" },
-  { id: "alerts", label: "Alerts", icon: "⚠️" },
-  { id: "community", label: "Community", icon: "💬" },
+  { id: "dashboard", labelKey: "dashboard", icon: "🏠" },
+  { id: "alerts", labelKey: "alerts", icon: "⚠️" },
+  { id: "community", labelKey: "community_feedback", icon: "💬" },
 ];
 
 export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
+  const { t } = useTranslations();
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-[100] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border shadow-sm">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
@@ -21,10 +25,10 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           <div className="text-3xl">🏔️</div>
           <div>
             <h1 className="text-xl font-bold text-primary flex items-center space-x-2">
-              <span>GlacialGuard</span>
+              <span>{t("glacial_guard")}</span>
               <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">ADMIN</span>
             </h1>
-            <p className="text-xs text-muted-foreground">Himalayan Glacier Monitoring System</p>
+            <p className="text-xs text-muted-foreground">{t("himalayan_glacier_monitoring")}</p>
           </div>
         </div>
         
@@ -42,15 +46,18 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
               )}
             >
               <span className="text-base">{tab.icon}</span>
-              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="hidden sm:inline">{t(tab.labelKey as keyof typeof import("../../translation/en.json"))}</span>
             </button>
           ))}
         </div>
         
-        {/* Admin Status Indicator */}
-        <div className="flex items-center space-x-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-          <span className="text-sm font-medium text-red-700">Admin Mode</span>
+        {/* Language Switcher and Status */}
+        <div className="flex items-center space-x-3">
+          <LanguageSwitcher />
+          <div className="flex items-center space-x-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-red-700">Admin Mode</span>
+          </div>
         </div>
       </div>
     </nav>

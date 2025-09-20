@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "@/lib/TranslationContext";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("map");
@@ -19,6 +20,7 @@ const Index = () => {
   const [mapCenter, setMapCenter] = useState<[number, number]>();
   const navigate = useNavigate();
   const { user, role, logout, loading } = useAuth();
+  const { t } = useTranslations();
 
   // Handle role-based routing after login
   useEffect(() => {
@@ -63,7 +65,7 @@ const Index = () => {
       <div className="h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">{t("loading") || "Loading..."}</p>
         </div>
       </div>
     );
