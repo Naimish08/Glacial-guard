@@ -59,26 +59,32 @@ export const ModelInputForm = () => {
             features.push(value);
         }
 
-        const recent_data = Array(12).fill(features);
+        const recent_data = Array.from({ length: 12 }, () => [...features]);
         const payload = { glacier_name, data: recent_data };
 
+        console.log("🔵 Sending payload to Flask:", payload);
+
         try {
-            const response = await fetch("http://127.0.0.1:5000/predict", {
+            const response = await fetch("http://localhost:5001/predict", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
 
+            console.log("🟢 Received response:", response);
+
             if (!response.ok) {
                 const errorData = await response.json();
+                console.error("🔴 Server error:", errorData);
                 setPredictionOutput({ error: `Server error: ${errorData.error || response.statusText}` } as PredictionOutput);
                 return;
             }
 
             const data = await response.json();
+            console.log("🟢 Prediction data:", data);
             setPredictionOutput(data);
         } catch (error) {
-            console.error(error);
+            console.error("🔴 Fetch failed:", error);
             setPredictionOutput({ error: "Failed to fetch prediction. Make sure the Flask server is running." } as PredictionOutput);
         } finally {
             setIsLoading(false);
