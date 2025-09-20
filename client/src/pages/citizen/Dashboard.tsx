@@ -14,19 +14,7 @@ import { AlertsSection, realTimeAlerts } from "../../components/citizen/AlertsSe
 import { ReportsSection } from "../../components/ReportsSection";
 import { CommunitySection } from "../../components/citizen/CommunitySection";
 import { useTranslations } from "../../lib/TranslationContext";
-
-// Assuming you have a separate StatusTicker component
-// If not, you can create it as shown below
-const StatusTicker = () => {
-  const { t } = useTranslations();
-  
-  return (
-    <div className="flex items-center justify-center space-x-2 h-10 py-2 bg-background border-b border-border">
-      <div className="w-2 h-2 bg-safe rounded-full animate-pulse-glow"></div>
-      <span className="text-sm text-muted-foreground">{t("system_active")}</span>
-    </div>
-  );
-};
+import { StatusTicker } from "../../components/StatusTicker";
 
 export function CitizenDashboard() {
   const { user, logout } = useAuth(); // <-- Add logout here
