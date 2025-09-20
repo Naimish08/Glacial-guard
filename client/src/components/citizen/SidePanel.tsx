@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { X, MapPin, UserCircle } from "lucide-react";
 import { useMap } from "react-leaflet";
 import { useAuth } from "../../lib/AuthContext";
+import { useTranslations } from "../../lib/TranslationContext";
 
 interface SidePanelProps {
   location: {
@@ -31,6 +32,7 @@ interface SidePanelProps {
 export const SidePanel = ({ location, onClose, onViewLocation }: SidePanelProps) => {
   const map = useMap();
   const { isAdmin } = useAuth();
+  const { t } = useTranslations();
 
   const handleViewOnMap = () => {
     if (location.coordinates) {
@@ -135,24 +137,24 @@ export const SidePanel = ({ location, onClose, onViewLocation }: SidePanelProps)
           </h3>
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <span className="text-muted-foreground">Area:</span>
+              <span className="text-muted-foreground">{t("area")}:</span>
               <div className="font-medium text-foreground">{details.lakeDetails.area}</div>
             </div>
             <div>
-              <span className="text-muted-foreground">Volume:</span>
+              <span className="text-muted-foreground">{t("volume")}:</span>
               <div className="font-medium text-foreground">{details.lakeDetails.volume}</div>
             </div>
             <div>
-              <span className="text-muted-foreground">Elevation:</span>
+              <span className="text-muted-foreground">{t("elevation")}:</span>
               <div className="font-medium text-foreground">{details.lakeDetails.elevation}</div>
             </div>
             <div>
-              <span className="text-muted-foreground">Temperature:</span>
+              <span className="text-muted-foreground">{t("temperature")}:</span>
               <div className="font-medium text-foreground">{details.lakeDetails.temperature}</div>
             </div>
           </div>
           <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
-            Last Updated: {details.lakeDetails.lastUpdated}
+            {t("last_updated")}: {details.lakeDetails.lastUpdated}
           </div>
         </Card>
 

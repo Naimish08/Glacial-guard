@@ -13,14 +13,17 @@ import { SidePanel } from "../../components/citizen/SidePanel";
 import { AlertsSection, realTimeAlerts } from "../../components/citizen/AlertsSection";
 import { ReportsSection } from "../../components/ReportsSection";
 import { CommunitySection } from "../../components/citizen/CommunitySection";
+import { useTranslations } from "../../lib/TranslationContext";
 
 // Assuming you have a separate StatusTicker component
 // If not, you can create it as shown below
 const StatusTicker = () => {
+  const { t } = useTranslations();
+  
   return (
     <div className="flex items-center justify-center space-x-2 h-10 py-2 bg-background border-b border-border">
       <div className="w-2 h-2 bg-safe rounded-full animate-pulse-glow"></div>
-      <span className="text-sm text-muted-foreground">System Active</span>
+      <span className="text-sm text-muted-foreground">{t("system_active")}</span>
     </div>
   );
 };
@@ -28,6 +31,7 @@ const StatusTicker = () => {
 export function CitizenDashboard() {
   const { user, logout } = useAuth(); // <-- Add logout here
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const [activeTab, setActiveTab] = useState<any>("map");
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
@@ -104,20 +108,20 @@ export function CitizenDashboard() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/')}>
               <Home className="mr-2 h-4 w-4" />
-              <span>Home</span>
+              <span>{t("home")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <span>{t("profile")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>{t("settings")}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>{t("log_out")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

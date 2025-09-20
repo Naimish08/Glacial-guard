@@ -5,6 +5,7 @@ import { useMap } from "react-leaflet";
 import { useAuth } from "../../lib/AuthContext";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useTranslations } from "../../lib/TranslationContext";
 
 // Mock alert data
 const alerts = [
@@ -58,6 +59,7 @@ export const AlertPanel = ({
 	className,
 }: AlertPanelProps) => {
 	const { isAdmin } = useAuth();
+	const { t } = useTranslations();
 
 	const handleAlertClick = (alert: any) => {
 		// Assuming each alert has coordinates in [longitude, latitude] format
@@ -97,10 +99,10 @@ export const AlertPanel = ({
 			<div className="mb-4">
 				<h2 className="text-lg font-bold text-foreground flex items-center space-x-2">
 					<span>⚠️</span>
-					<span>Active Alerts</span>
+					<span>{t("active_alerts")}</span>
 				</h2>
 				<p className="text-sm text-muted-foreground">
-					AI-powered risk predictions
+					{t("ai_powered_risk_predictions")}
 				</p>
 			</div>
 
@@ -139,7 +141,7 @@ export const AlertPanel = ({
 						<div className="space-y-2">
 							<div className="bg-muted/50 rounded-md p-2">
 								<p className="text-xs font-medium text-foreground mb-1">
-									📊 AI Analysis
+									📊 {t("ai_analysis")}
 								</p>
 								<p className="text-xs text-muted-foreground">
 									{alert.reason}
@@ -149,7 +151,7 @@ export const AlertPanel = ({
 							<div className="bg-accent/10 rounded-md p-2">
 								<p className="text-xs font-medium text-foreground mb-1 flex items-center space-x-1">
 									<span>🔬</span>
-									<span>SHAP Explanation</span>
+									<span>{t("shap_explanation")}</span>
 								</p>
 								<p className="text-xs text-muted-foreground">
 									{alert.shap}
@@ -158,19 +160,19 @@ export const AlertPanel = ({
 
 							<div className="flex items-center justify-between text-xs">
 								<div>
-									<span className="text-muted-foreground">📅 Forecast: </span>
+									<span className="text-muted-foreground">📅 {t("forecast")}: </span>
 									<span className="font-medium text-foreground">
 										{alert.forecast}
 									</span>
 								</div>
 								<div className="text-muted-foreground">
-									📊 View Only
+									📊 {t("view_details")}
 								</div>
 							</div>
 
 							<div className="pt-1">
 								<p className="text-xs text-muted-foreground mb-1">
-									🏘️ Affected Villages:
+									🏘️ {t("affected_villages")}:
 								</p>
 								<div className="flex flex-wrap gap-1">
 									{alert.villages.map((village) => (
@@ -189,10 +191,10 @@ export const AlertPanel = ({
 						{/* Action Buttons */}
 						<div className="flex space-x-2 mt-3 pt-2 border-t border-border">
 							<button className="flex-1 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-medium py-1.5 rounded-md transition-colors">
-								View Details
+								{t("view_details")}
 							</button>
 							<button className="flex-1 bg-watch/10 hover:bg-watch/20 text-watch text-xs font-medium py-1.5 rounded-md transition-colors">
-								🌊 Flood Map
+								🌊 {t("flood_map")}
 							</button>
 						</div>
 					</Card>
@@ -203,12 +205,12 @@ export const AlertPanel = ({
 			<div className="mt-4 p-3 bg-gradient-glacier rounded-lg">
 				<div className="text-center">
 					<p className="text-sm font-semibold text-card-foreground">
-						Today's Summary
+						{t("todays_summary")}
 					</p>
 					<div className="flex justify-center space-x-4 mt-2 text-xs text-card-foreground/80">
-						<span>🔴 2 High Risk</span>
-						<span>🟠 1 Watch</span>
-						<span>🟢 15 Safe</span>
+						<span>🔴 2 {t("high_risk")}</span>
+						<span>🟠 1 {t("watch")}</span>
+						<span>🟢 15 {t("safe")}</span>
 					</div>
 				</div>
 			</div>

@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
 import { LogOut, User, Settings, Home, Shield } from "lucide-react";
 import { StatusTicker } from "@/components/StatusTicker";
+import { useTranslations } from "../../lib/TranslationContext";
 
 // Assuming you have a separate StatusTicker component
 // If not, you can define it here for this component to use
@@ -21,6 +22,7 @@ export function AdminDashboard() {
   const { user, role, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (!loading) {
@@ -82,20 +84,20 @@ export function AdminDashboard() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/')}>
               <Home className="mr-2 h-4 w-4" />
-              <span>Home</span>
+              <span>{t("home")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <span>{t("profile")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>{t("settings")}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>{t("log_out")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
