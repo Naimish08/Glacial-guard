@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON, LayersControl, Marker, Popup, useMap, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, LayersControl, Marker, Popup, useMap } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { himalayanRegions, floodCorridors } from "../geojson";
 import { realTimeAlerts } from './AlertsSection';
@@ -7,43 +7,12 @@ import { Icon } from 'leaflet';
 import { Feature, GeoJsonObject } from "geojson";
 import { Layer, PathOptions } from "leaflet";
 import { cn } from "@/lib/utils";
-import L from "leaflet";
 
-// Demo village data (some inside, some outside glacier circles)
-const villages = [
-  { name: "Phortse", coords: [27.893, 86.771] },      // Inside Khumbu
-  { name: "Dingboche", coords: [27.893, 86.831] },    // Inside Khumbu
-  { name: "Lukla", coords: [27.688, 86.731] },        // Outside circles
-  { name: "Thangu", coords: [27.900, 88.600] },       // Outside circles
-  { name: "Gokyo", coords: [27.954, 86.695] },        // Near Ngozumpa
-  { name: "Gangotri", coords: [30.990, 79.080] },     // Near Gangotri Glacier
-
-  { name: "Batal", coords: [32.300, 77.600] },
-  { name: "Chitkul", coords: [31.300, 78.400] },
-  { name: "Tandi", coords: [32.500, 77.100] },
-  { name: "Padum", coords: [33.500, 76.800] },
-  { name: "Lobuche", coords: [27.940, 86.810] },
-  { name: "Rongbuk Monastery", coords: [28.100, 86.860] },
-  { name: "Warshi", coords: [35.200, 77.300] },
-  { name: "Sonamarg", coords: [34.300, 75.290] },
-  { name: "Jankichatti", coords: [31.010, 78.450] },
-  { name: "Khati", coords: [30.080, 79.990] },
-  { name: "Bugdiyar", coords: [30.290, 80.050] },
-  { name: "Mana", coords: [30.740, 79.490] },
-  { name: "Chhatru", coords: [32.300, 77.200] },
-  { name: "Bukki", coords: [30.800, 78.600] },
-  { name: "Rattu Cantonment", coords: [35.100, 75.000] },
-  { name: "Aru", coords: [34.010, 75.140] },
-  { name: "Kugti", coords: [32.590, 76.620] }
-];
-
-
-const villageIcon = new L.Icon({
-  iconUrl: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f3e1.png", // 🏡 emoji as icon
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-});
+interface MapViewProps {
+  onLocationSelect: (location: any) => void;
+  selectedLocation?: string;
+  onPanToLocation?: [number, number];
+}
 
 // Separate component for handling map updates
 const MapUpdater = ({ onPanToLocation }: { onPanToLocation?: [number, number] }) => {
@@ -58,7 +27,7 @@ const MapUpdater = ({ onPanToLocation }: { onPanToLocation?: [number, number] })
   return null;
 };
 
-export const MapView: React.FC<MapViewProps> = ({ 
+export const MapViewSatellite: React.FC<MapViewProps> = ({ 
   onLocationSelect, 
   selectedLocation,
   onPanToLocation 
@@ -118,11 +87,14 @@ export const MapView: React.FC<MapViewProps> = ({
 
       // Highlight selected feature
       if (selectedLocation === props.name) {
-        layer.setStyle({
-          weight: 3,
-          color: "hsl(var(--primary))",
-          fillOpacity: 0.8
-        });
+        // Only Path layers (Polygon, Polyline, etc.) have setStyle
+        if ((layer as any).setStyle) {
+          (layer as import("leaflet").Path).setStyle({
+            weight: 3,
+            color: "hsl(var(--primary))",
+            fillOpacity: 0.8
+          });
+        }
       }
 
       // Click handler
@@ -154,51 +126,6 @@ export const MapView: React.FC<MapViewProps> = ({
     popupAnchor: [1, -34],
   });
 
-  // Helper to get color based on status
-  const getStatusColor = (status: string) => {
-    if (status === "danger") return "#e53935";   // Bright red
-    if (status === "watch") return "#ffb300";    // Bright orange
-    if (status === "safe") return "#43a047";     // Bright green
-    return "#757575";                            // Gray
-  };
-
-  // Render circles for each glacier
-  const glacierCircles = (himalayanRegions as any).features.map((feature: any) => {
-    const center = feature.properties.center;
-    const radius = feature.properties.radius ? feature.properties.radius * 3: 6000; // Double the radius or set to 6000m
-    const status = feature.properties.status;
-    const color = getStatusColor(status);
-
-    return (
-      <Circle
-        key={feature.properties.name}
-        center={center}
-        radius={radius}
-        pathOptions={{
-          color: color,
-          fillColor: color,
-          fillOpacity: 0.5,
-          weight: 3,
-        }}
-        eventHandlers={{
-          click: () => onLocationSelect({
-            name: feature.properties.name,
-            risk: status,
-            ...feature.properties
-          })
-        }}
-      >
-        <Popup>
-          <div>
-            <h3>{feature.properties.name}</h3>
-            <p>Risk Score: {feature.properties.riskScore}</p>
-            <p>Status: {status}</p>
-          </div>
-        </Popup>
-      </Circle>
-    );
-  });
-
   return (
     <div className="w-full h-full relative">
       <MapContainer
@@ -208,19 +135,20 @@ export const MapView: React.FC<MapViewProps> = ({
         className="w-full h-full"
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='Tiles © <a href="https://www.esri.com/">Esri</a>, Earthstar Geographics'
+        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
         />
 
+        
         <LayersControl position="topright">
-          {/* Remove or comment out the Glacial Lakes GeoJSON */}
-          {/* <LayersControl.Overlay name="Glacial Lakes" checked>
+          <LayersControl.Overlay name="Glacial Lakes" checked>
             <GeoJSON 
               data={himalayanRegions as GeoJsonObject}
               style={getLakeStyle}
               onEachFeature={onEachLake}
             />
-          </LayersControl.Overlay> */}
+          </LayersControl.Overlay>
+          
           <LayersControl.Overlay name="Flood Corridors" checked>
             <GeoJSON
               data={floodCorridors as GeoJsonObject}
@@ -228,22 +156,6 @@ export const MapView: React.FC<MapViewProps> = ({
             />
           </LayersControl.Overlay>
         </LayersControl>
-
-        {/* Render glacier circles */}
-        {glacierCircles}
-
-        {/* Render village markers */}
-        {villages.map((village) => (
-          <Marker
-            key={village.name}
-            position={village.coords}
-            icon={villageIcon}
-          >
-            <Popup>
-              <strong>{village.name}</strong>
-            </Popup>
-          </Marker>
-        ))}
 
         {/* Legend */}
         <div className="absolute bottom-5 right-5 bg-card/95 p-3 rounded-lg shadow-md border border-border">
@@ -269,9 +181,35 @@ export const MapView: React.FC<MapViewProps> = ({
         </div>
 
         <MapUpdater onPanToLocation={onPanToLocation} />
+
+        {realTimeAlerts.map((alert) => (
+          <Marker
+            key={alert.id}
+            position={
+              Array.isArray(alert.coordinates) && alert.coordinates.length === 2
+                ? [alert.coordinates[0], alert.coordinates[1]] as [number, number]
+                : [0, 0]
+            }
+            icon={customIcon}
+            eventHandlers={{
+              click: () => onLocationSelect({
+                name: alert.lakeName,
+                id: alert.lakeId,
+                risk: alert.riskScore
+              })
+            }}
+          >
+            <Popup>
+              <div>
+                <h3>{alert.lakeName}</h3>
+                <p>Risk Score: {alert.riskScore}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   );
 };
 
-export default MapView;
+export default MapViewSatellite;

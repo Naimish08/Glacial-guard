@@ -10,18 +10,18 @@ import { Navigation } from "../../components/citizen/Navigation";
 import { AlertPanel } from "../../components/citizen/AlertPanel";
 import { MapView } from "../../components/citizen/MapView";
 import { SidePanel } from "../../components/citizen/SidePanel";
-import { AlertsSection, realTimeAlerts } from "../../components/admin/AlertsSection";
+import { AlertsSection, realTimeAlerts } from "../../components/citizen/AlertsSection";
 import { ReportsSection } from "../../components/ReportsSection";
 import { CommunitySection } from "../../components/citizen/CommunitySection";
+import { useTranslations } from "../../lib/TranslationContext";
 import { StatusTicker } from "../../components/StatusTicker";
 
 export function CitizenDashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth(); // <-- Add logout here
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
-
-
-  const [activeTab, setActiveTab] = useState("map");
+  const [activeTab, setActiveTab] = useState<any>("map");
   const [selectedLocation, setSelectedLocation] = useState<any>(null);
   const [selectedAlertId, setSelectedAlertId] = useState<number>();
   const [mapCenter, setMapCenter] = useState<[number, number]>();
@@ -39,7 +39,7 @@ export function CitizenDashboard() {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/');
+      navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -61,17 +61,22 @@ export function CitizenDashboard() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
+      {/* 1. Main Navigation Bar (fixed at top with z-index 100) */}
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <StatusTicker className="flex-none" />
+      
+      {/* 2. Status Ticker (fixed below nav bar with z-index 90) */}
+      <div className="fixed top-16 left-0 right-0 z-[90]">
+        <StatusTicker />
+      </div>
 
-      {/* User Profile Dropdown */}
-      <div className="fixed top-4 right-4 z-50">
+      {/* 3. User Profile Dropdown */}
+      <div className="fixed top-4 right-4 z-[110]">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-12 h-12 rounded-full p-0">
               <Avatar className="w-8 h-8">
                 <AvatarImage src={user?.user_metadata?.avatar_url} />
-                 <AvatarFallback>
+                <AvatarFallback>
                   {user?.email?.charAt(0).toUpperCase() || 'U'}
                 </AvatarFallback> 
               </Avatar>
@@ -91,26 +96,29 @@ export function CitizenDashboard() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/')}>
               <Home className="mr-2 h-4 w-4" />
-              <span>Home</span>
+              <span>{t("home")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <span>{t("profile")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>{t("settings")}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>{t("log_out")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       
-      <div className="flex-1 flex overflow-hidden">
+      {/* 4. Main content, with padding to offset the fixed header elements */}
+      {/* The combined height of the nav (h-16) and ticker (h-12) is ~64px + 48px = 112px */}
+      {/* So, we use a padding top of pt-[112px] */}
+      <div className="flex-1 flex overflow-hidden pt-[112px]">
         {activeTab === "map" ? (
           <>
             <AlertPanel 
@@ -149,12 +157,12 @@ export function CitizenDashboard() {
       </div>
     </div>
   );
-  
 }
 
+// NOTE: This interface should be moved to a separate types file for better organization.
 interface MapViewProps {
   onLocationSelect: (location: any) => void;
   selectedLocation?: string;
   onPanToLocation?: [number, number];
-  children?: React.ReactNode; // Add this
+  children?: React.ReactNode; 
 }

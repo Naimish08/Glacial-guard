@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Eye, EyeOff, Mail, CheckCircle } from "lucide-react";
+import { useTranslations } from "../lib/TranslationContext";
 
 export function LoginDialog() {
   const { login, loading, role, resendEmailConfirmation } = useAuth();
@@ -22,6 +23,7 @@ export function LoginDialog() {
   const [isEmailConfirmationError, setIsEmailConfirmationError] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +32,9 @@ export function LoginDialog() {
     setIsEmailConfirmationError(false);
     try {
       await login(email, password);
-      // Navigate based on role
-      if (role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/citizen');
-      }
+      // Navigation will be handled by the AuthContext or dashboard components
+      // The role will be available after the login completes
+      navigate('/');
     } catch (err: any) {
       const errorMessage = err.message || "Login failed";
       setError(errorMessage);
@@ -110,14 +109,14 @@ export function LoginDialog() {
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="login">{t("login")}</TabsTrigger>
+              <TabsTrigger value="signup">{t("sign_up")}</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
+                  <Label htmlFor="login-email">{t("email")}</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -129,7 +128,7 @@ export function LoginDialog() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
+                  <Label htmlFor="login-password">{t("password")}</Label>
                   <div className="relative">
                     <Input
                       id="login-password"
@@ -192,7 +191,7 @@ export function LoginDialog() {
                       Logging in...
                     </>
                   ) : (
-                    "Login"
+                    t("login")
                   )}
                 </Button>
               </form>
@@ -201,7 +200,7 @@ export function LoginDialog() {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email">{t("email")}</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -213,7 +212,7 @@ export function LoginDialog() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password">{t("password")}</Label>
                   <div className="relative">
                     <Input
                       id="signup-password"
@@ -240,7 +239,7 @@ export function LoginDialog() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <Label htmlFor="confirm-password">{t("confirm_password")}</Label>
                   <div className="relative">
                     <Input
                       id="confirm-password"

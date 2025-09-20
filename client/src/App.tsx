@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./lib/AuthContext";
+import { TranslationProvider } from "./lib/TranslationContext";
 import { AdminDashboard } from "./pages/admin/Dashboard";
 import { CitizenDashboard } from "./pages/citizen/Dashboard";
 import { LoginDialog } from "./components/LoginDialog";
@@ -19,18 +20,20 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <AuthProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<LoginDialog />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/citizen" element={<CitizenDashboard />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
+        <TranslationProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<LoginDialog />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/citizen" element={<CitizenDashboard />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
+        </TranslationProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

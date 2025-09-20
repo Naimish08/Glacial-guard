@@ -10,13 +10,14 @@
     "server"
   ],
   "scripts": {
-    "dev": "concurrently \"npm:dev -w server\" \"npm:start -w client\" \"cd python-service && python3 app.py\"",
+    "dev": "concurrently \"npm:dev -w server\" \"npm:start -w client\" \"cd python-service && python app.py\"",
     "install:js": "npm install && npm install --workspaces --if-present",
     "install:py": "cd python-service && pip install -r requirements.txt",
     "install:all": "npm run install:js && npm run install:py",
     "build:all": "npm run build --workspaces --if-present"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.10",
     "typescript": "^5.2.2"

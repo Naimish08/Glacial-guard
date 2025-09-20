@@ -21,8 +21,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const deriveRole = (u: any): UserRole => {
     if (!u) return null;
-    const possibleRole = u?.app_metadata?.role || u?.user_metadata?.role;
-    if (possibleRole === 'admin') return 'admin';
+    
+    // Check for role in multiple places
+    const possibleRole = u?.app_metadata?.role || 
+                        u?.user_metadata?.role || 
+                        u?.user_metadata?.user_role ||
+                        u?.role;
+    
+    // For testing purposes, you can set admin role based on email
+    // Remove this in production and use proper role management
+    if (u?.email && u.email.includes('admin')) {
+      console.log('🔑 Admin role assigned based on email:', u.email);
+      return 'admin';
+    }
+    
+    if (possibleRole === 'admin') {
+      console.log('🔑 Admin role found in metadata:', possibleRole);
+      return 'admin';
+    }
+    
+    console.log('👤 Citizen role assigned for:', u.email);
     return 'citizen';
   };
 

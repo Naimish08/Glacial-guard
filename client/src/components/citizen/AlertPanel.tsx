@@ -5,91 +5,25 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../../lib/AuthContext";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
-import { AlertCircle, MessageSquare } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { useTranslations } from "../../lib/TranslationContext";
+import { himalayanRegions } from "../geojson";
 
-// Updated glacier data with real locations from your table
-const glacierAlerts = [
-    {
-        id: 1,
-        location: "Bara Shigri",
-        region: "Himachal Pradesh",
-        risk: "danger",
-        score: 8.5,
-        timestamp: "2 min ago",
-        reason: "Rapid ice melt detected",
-        shap: "Temperature +3.2°C, Precipitation +15%",
-        forecast: "24-48 hours",
-        villages: ["Keylong", "Manali", "Lahaul Valley"],
-        coordinates: [77.58, 32.2],
-        phoneNumbers: ["+919876543210", "+919876543211", "+919876543212"],
-        localLanguages: ["hindi", "english"],
-        evacuationZones: ["Keylong", "Manali"]
-    },
-    {
-        id: 2,
-        location: "Gangotri",
-        region: "Uttarakhand", 
-        risk: "danger",
-        score: 7.9,
-        timestamp: "15 min ago",
-        reason: "Moraine instability",
-        shap: "Seismic activity +25%, Ice thickness -8%",
-        forecast: "3-5 days",
-        villages: ["Gangotri", "Uttarkashi", "Harsil"],
-        coordinates: [79.08, 30.99],
-        phoneNumbers: ["+919876543221", "+919876543222", "+919876543223"],
-        localLanguages: ["hindi", "garhwali", "kumaoni", "english"],
-        evacuationZones: ["Gangotri", "Uttarkashi"]
-    },
-    {
-        id: 3,
-        location: "Siachen",
-        region: "Kashmir",
-        risk: "watch",
-        score: 5.8,
-        timestamp: "1 hour ago",
-        reason: "Increased water level",
-        shap: "Water flow +12%, Surface area +5%",
-        forecast: "1-2 weeks",
-        villages: ["Nubra Valley", "Diskit"],
-        coordinates: [77.1, 35.28],
-        phoneNumbers: ["+919876543224", "+919876543225", "+919876543226"],
-        localLanguages: ["urdu", "hindi", "english"],
-        evacuationZones: ["Nubra Valley", "Diskit"]
-    },
-    {
-        id: 4,
-        location: "Khumbu",
-        region: "Nepal",
-        risk: "danger",
-        score: 8.2,
-        timestamp: "5 min ago",
-        reason: "Ice dam formation",
-        shap: "Ice thickness +15%, Temperature fluctuation +40%",
-        forecast: "12-24 hours",
-        villages: ["Namche Bazaar", "Lukla", "Everest Base Camp"],
-        coordinates: [86.85, 27.98],
-        phoneNumbers: ["+977984123456", "+977984123457"],
-        localLanguages: ["nepali", "english"],
-        evacuationZones: ["Namche Bazaar", "Lukla"]
-    },
-    {
-        id: 5,
-        location: "Yamunotri",
-        region: "Uttarakhand",
-        risk: "watch",
-        score: 6.1,
-        timestamp: "30 min ago",
-        reason: "Accelerated melting",
-        shap: "Snow cover -12%, Surface temperature +2.5°C",
-        forecast: "4-7 days",
-        villages: ["Yamunotri", "Hanuman Chatti", "Har Ki Dun"],
-        coordinates: [78.45, 31.01],
-        phoneNumbers: ["+919876543230", "+919876543231", "+919876543232"],
-        localLanguages: ["hindi", "garhwali", "kumaoni", "english"],
-        evacuationZones: ["Yamunotri", "Hanuman Chatti"]
-    }
-];
+// Generate alerts from GeoJSON glacier data
+const alerts = himalayanRegions.features
+	.filter((feature: any) => feature.properties.status === "danger" || feature.properties.status === "watch")
+	.map((feature: any, index: number) => ({
+		id: index + 1,
+		location: feature.properties.name,
+		risk: feature.properties.status,
+		score: feature.properties.riskScore || (feature.properties.status === "danger" ? 8.5 : 5.8),
+		timestamp: feature.properties.lastUpdated ? `${Math.floor(Math.random() * 60)} min ago` : "1 hour ago",
+		reason: feature.properties.riskFactors ? feature.properties.riskFactors.join(", ") : "Risk factors detected",
+		shap: `Temperature ${feature.properties.temperature}, Elevation ${feature.properties.elevation}`,
+		forecast: feature.properties.status === "danger" ? "24-48 hours" : "1-2 weeks",
+		villages: ["Nearby villages"],
+		coordinates: feature.properties.center || [0, 0],
+	}));
 
 interface AlertPanelProps {
     onAlertSelect: (coordinates: [number, number]) => void;

@@ -2,6 +2,8 @@ import { AlertPanel } from "../../components/admin/AlertPanel";
 import { MapView } from "../../components/admin/MapView";
 import { SidePanel } from "../../components/admin/SidePanel";
 import { Navigation } from "../../components/admin/Navigation";
+import { AlertsSection } from "../../components/admin/AlertsSection";
+import { CommunityManagement } from "../../components/admin/CommunityManagement";
 import { useAuth } from "../../lib/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,11 +11,18 @@ import { Button } from "../../components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
 import { LogOut, User, Settings, Home, Shield } from "lucide-react";
+import { StatusTicker } from "@/components/StatusTicker";
+import { useTranslations } from "../../lib/TranslationContext";
+
+// Assuming you have a separate StatusTicker component
+// If not, you can define it here for this component to use
+
 
 export function AdminDashboard() {
   const { user, role, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { t } = useTranslations();
 
   useEffect(() => {
     if (!loading) {
@@ -37,10 +46,17 @@ export function AdminDashboard() {
   if (loading || !user || role !== 'admin') return null;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
+      {/* 1. Main Navigation Bar (fixed at top) */}
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
       
-      {/* Admin User Profile Dropdown */}
+      {/* 2. Status Ticker (fixed below the nav bar) */}
+      {/* The `top-16` class assumes the navigation bar has a height of h-16 (64px) */}
+      <div className="fixed top-16 left-0 right-0 z-[90]">
+        <StatusTicker />
+      </div>
+
+      {/* 3. Admin User Profile Dropdown */}
       <div className="fixed top-4 right-4 z-50">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -68,30 +84,38 @@ export function AdminDashboard() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/')}>
               <Home className="mr-2 h-4 w-4" />
-              <span>Home</span>
+              <span>{t("home")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <User className="mr-2 h-4 w-4" />
-              <span>Profile</span>
+              <span>{t("profile")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
+              <span>{t("settings")}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>{t("log_out")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      <div className="flex">
-        <SidePanel onClose={() => {}} location={null} />
-        <main className="flex-1 p-6 pt-20">
-          <AlertPanel onAlertSelect={() => {}} />
-          <MapView onLocationSelect={() => {}} />
+      {/* 4. Main content, correctly pushed down by both fixed elements */}
+      {/* The combined height of the nav (h-16) and ticker (h-12) is ~64px + 48px = 112px */}
+      {/* So, we use a padding top of pt-[112px] */}
+      <div className="flex flex-1 pt-[112px]">
+        <main className="flex-1 p-6">
+          {activeTab === "dashboard" && (
+            <div className="space-y-6">
+              <AlertPanel onAlertSelect={() => {}} />
+              <MapView onLocationSelect={() => {}} />
+            </div>
+          )}
+          {activeTab === "alerts" && <AlertsSection />}
+          {activeTab === "community" && <CommunityManagement />}
         </main>
       </div>
     </div>

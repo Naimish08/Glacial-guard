@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigation } from "@/components/admin/Navigation";
 import { MapView } from "@/components/admin/MapView";
 import { AlertPanel } from "@/components/admin/AlertPanel";
@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslations } from "@/lib/TranslationContext";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("map");
@@ -18,7 +19,22 @@ const Index = () => {
   const [selectedAlertId, setSelectedAlertId] = useState<number>();
   const [mapCenter, setMapCenter] = useState<[number, number]>();
   const navigate = useNavigate();
-  const { user, role, logout } = useAuth();
+  const { user, role, logout, loading } = useAuth();
+  const { t } = useTranslations();
+
+  // Handle role-based routing after login
+  useEffect(() => {
+    if (!loading && user && role) {
+      console.log('🚀 Routing user:', user.email, 'with role:', role);
+      if (role === 'admin') {
+        console.log('➡️ Navigating to admin dashboard');
+        navigate('/admin');
+      } else if (role === 'citizen') {
+        console.log('➡️ Navigating to citizen dashboard');
+        navigate('/citizen');
+      }
+    }
+  }, [user, role, loading, navigate]);
 
   const handleLocationSelect = (location: any) => {
     setSelectedLocation(location);
@@ -43,10 +59,24 @@ const Index = () => {
     }
   };
 
+  // Show loading while determining user role
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">{t("loading") || "Loading..."}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <StatusTicker className="flex-none" />
+      <div className="fixed top-16 left-0 right-0 z-[90]">
+        <StatusTicker />
+      </div>
 
       {/* Authentication buttons */}
       <div className="fixed top-4 right-4 z-50 flex gap-2">
@@ -81,7 +111,7 @@ const Index = () => {
         )}
       </div>
       
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden pt-[112px]">
         {activeTab === "map" ? (
           <>
             <AlertPanel 
