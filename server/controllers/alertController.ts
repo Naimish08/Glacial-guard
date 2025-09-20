@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
-import { TwilioService } from '../services/twilioService.ts';
-import { WhatsAppService } from '../services/whatsappService.ts';
-
-// ... rest of your controller code (keep as is)
-
+import { TwilioService } from '../services/twilioService.js';
+import { WhatsAppService } from '../services/whatsappService.js';
+import { GLACIER_CONTACTS, generateEmergencyMessage } from '../utils/messageTemplates.js';
 
 // Define proper interfaces for type safety
 interface AlertResult {
@@ -228,6 +226,87 @@ export const testAlert = async (req: Request, res: Response): Promise<void> => {
   } catch (error: any) {
     res.status(500).json({
       error: 'Test alert failed',
+      message: error.message
+    });
+  }
+};
+
+// Multilingual Emergency Alert Function
+export const sendMultilingualEmergencyAlert = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { glacierName, riskScore, floodTimeMinutes = 45, evacuationTimeMinutes = 30 } = req.body;
+
+    const glacierData = GLACIER_CONTACTS[glacierName as keyof typeof GLACIER_CONTACTS];
+    if (!glacierData) {
+      res.status(400).json({ error: 'Glacier not found in database' });
+      return;
+    }
+
+    const results: SMSResults = {
+      sms: [],
+      whatsapp: [],
+      summary: { totalSent: 0, totalFailed: 0 }
+    };
+
+    // Send alerts in all supported languages for this glacier
+    for (const language of glacierData.languages) {
+      const message = generateEmergencyMessage({
+        glacierName,
+        region: glacierData.region,
+        safeZone: glacierData.evacuationZones[0],
+        floodTimeMinutes,
+        evacuationTimeMinutes,
+        language
+      });
+
+      // Send to all phone numbers for this glacier
+      for (const phoneNumber of glacierData.phoneNumbers) {
+        // Send SMS
+        const smsResult = await twilioService.sendSMS(phoneNumber, message);
+        results.sms.push({
+          phoneNumber,
+          success: smsResult.success,
+          messageId: smsResult.messageId,
+          status: smsResult.status,
+          cost: smsResult.cost,
+          error: smsResult.error,
+          note: `Language: ${language}`
+        });
+
+        // Send WhatsApp
+        const wpResult = await whatsappService.sendMessage(phoneNumber, message);
+        results.whatsapp.push({
+          phoneNumber,
+          success: wpResult.success,
+          messageId: wpResult.messageId,
+          status: wpResult.status,
+          error: wpResult.error,
+          note: `Language: ${language}`
+        });
+
+        // Update counters
+        if (smsResult.success) results.summary.totalSent++;
+        else results.summary.totalFailed++;
+        
+        if (wpResult.success) results.summary.totalSent++;
+        else results.summary.totalFailed++;
+      }
+    }
+
+    res.json({
+      status: 'multilingual_emergency_alert_dispatched',
+      glacierName,
+      region: glacierData.region,
+      riskScore,
+      languagesUsed: glacierData.languages,
+      evacuationZones: glacierData.evacuationZones,
+      results,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error: any) {
+    res.status(500).json({
+      error: 'Multilingual emergency alert failed',
       message: error.message
     });
   }
